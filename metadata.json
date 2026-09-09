@@ -1,0 +1,6 @@
+{
+  "name": "Google Merchandise Store",
+  "description": "Modern, premium, youth-focused e-commerce experience redesign for the Google Merchandise Store.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
