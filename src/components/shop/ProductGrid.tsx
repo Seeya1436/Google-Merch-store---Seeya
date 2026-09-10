@@ -33,22 +33,89 @@ export const ProductGrid: React.FC = () => {
           if (!product.isBestSeller) return false;
         } else if (filters.category === 'sale') {
           if (!product.isSale) return false;
+        } else if (filters.category === 'featured') {
+          if (!product.isBestSeller && !product.isNew && !product.tags?.includes('featured')) return false;
         } else if (filters.category === 'android') {
-          const isAndroid = product.category === 'android' || product.id.includes('android') || product.name.toLowerCase().includes('android') || product.name.toLowerCase().includes('bugdroid');
+          const isAndroid =
+            product.category === 'android' ||
+            product.brand === 'Android' ||
+            product.collection?.toLowerCase().includes('android') ||
+            product.id.includes('android') ||
+            product.name.toLowerCase().includes('android') ||
+            product.name.toLowerCase().includes('bugdroid') ||
+            product.tags?.includes('android');
           if (!isAndroid) return false;
         } else if (filters.category === 'youtube') {
-          const isYt = product.category === 'youtube' || product.id.includes('yt') || product.name.toLowerCase().includes('youtube');
+          const isYt =
+            product.category === 'youtube' ||
+            product.brand === 'YouTube' ||
+            product.collection?.toLowerCase().includes('youtube') ||
+            product.id.includes('yt') ||
+            product.name.toLowerCase().includes('youtube') ||
+            product.tags?.includes('youtube');
           if (!isYt) return false;
         } else if (filters.category === 'cloud') {
-          const isCloud = product.category === 'cloud' || product.id.includes('cloud') || product.name.toLowerCase().includes('cloud') || product.name.toLowerCase().includes('gopher');
+          const isCloud =
+            product.category === 'cloud' ||
+            product.brand === 'Google Cloud' ||
+            product.collection?.toLowerCase().includes('cloud') ||
+            product.id.includes('cloud') ||
+            product.name.toLowerCase().includes('cloud') ||
+            product.name.toLowerCase().includes('kubernetes') ||
+            product.tags?.includes('cloud');
           if (!isCloud) return false;
         } else if (filters.category === 'chrome') {
-          const isChrome = product.category === 'chrome' || product.id.includes('dino') || product.name.toLowerCase().includes('chrome') || product.name.toLowerCase().includes('dinosaur');
+          const isChrome =
+            product.category === 'chrome' ||
+            product.brand === 'Chrome' ||
+            product.collection?.toLowerCase().includes('chrome') ||
+            product.id.includes('dino') ||
+            product.name.toLowerCase().includes('chrome') ||
+            product.name.toLowerCase().includes('dinosaur') ||
+            product.tags?.includes('chrome') ||
+            product.tags?.includes('dino');
           if (!isChrome) return false;
         } else if (filters.category === 'gemini') {
-          const isGemini = product.category === 'gemini' || product.name.toLowerCase().includes('gemini');
+          const isGemini =
+            product.category === 'gemini' ||
+            product.brand === 'Gemini' ||
+            product.collection?.toLowerCase().includes('gemini') ||
+            product.name.toLowerCase().includes('gemini') ||
+            product.tags?.includes('gemini');
           if (!isGemini) return false;
-        } else if (product.category !== filters.category) {
+        } else if (filters.category === 'pixel') {
+          const isPixel =
+            product.category === 'pixel' ||
+            product.brand === 'Pixel' ||
+            product.collection?.toLowerCase().includes('pixel') ||
+            product.name.toLowerCase().includes('pixel') ||
+            product.tags?.includes('pixel');
+          if (!isPixel) return false;
+        } else if (filters.category === 'google') {
+          const isGoogle =
+            product.category === 'google' ||
+            product.brand === 'Google' ||
+            product.collection?.toLowerCase().includes('google') ||
+            product.tags?.includes('google');
+          if (!isGoogle) return false;
+        } else if (filters.category === 'office') {
+          const isOffice =
+            product.category === 'home' ||
+            product.category === 'office' ||
+            product.collection?.toLowerCase().includes('office') ||
+            product.subCategory?.toLowerCase().includes('desk') ||
+            product.subCategory?.toLowerCase().includes('stationery') ||
+            product.tags?.includes('stationery') ||
+            product.tags?.includes('desk') ||
+            product.tags?.includes('office');
+          if (!isOffice) return false;
+        } else if (filters.category === 'lifestyle') {
+          const isLifestyle =
+            product.category === 'home' ||
+            product.category === 'accessories' ||
+            (product.lifestyleCollection && product.lifestyleCollection.length > 0);
+          if (!isLifestyle) return false;
+        } else if (product.category !== filters.category && product.collection?.toLowerCase() !== filters.category) {
           return false;
         }
       }
@@ -88,8 +155,15 @@ export const ProductGrid: React.FC = () => {
         const q = filters.searchQuery.toLowerCase();
         const matchesName = product.name.toLowerCase().includes(q);
         const matchesTag = product.tagline.toLowerCase().includes(q);
+        const matchesDesc = product.description.toLowerCase().includes(q);
         const matchesCat = product.category.toLowerCase().includes(q);
-        if (!matchesName && !matchesTag && !matchesCat) return false;
+        const matchesColl = product.collection ? product.collection.toLowerCase().includes(q) : false;
+        const matchesBrand = product.brand ? product.brand.toLowerCase().includes(q) : false;
+        const matchesSub = product.subCategory ? product.subCategory.toLowerCase().includes(q) : false;
+        const matchesTags = product.tags ? product.tags.some((t) => t.toLowerCase().includes(q)) : false;
+        if (!matchesName && !matchesTag && !matchesDesc && !matchesCat && !matchesColl && !matchesBrand && !matchesSub && !matchesTags) {
+          return false;
+        }
       }
 
       return true;
@@ -115,17 +189,27 @@ export const ProductGrid: React.FC = () => {
       
       {/* Category Header Banner */}
       <div className="mb-8 pb-6 border-b border-neutral-200">
-        <div className="flex flex-col md:flex-row md:items-end justify-between">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono block mb-1">
-              Google Store Catalog
-            </span>
+            <div className="flex items-center space-x-3 mb-1">
+              <span className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono">
+                Google Store Catalog
+              </span>
+              {filters.category !== 'all' && (
+                <button
+                  onClick={() => setFilters((prev) => ({ ...prev, category: 'all' }))}
+                  className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center transition-colors"
+                >
+                  &larr; Back to All Merchandise
+                </button>
+              )}
+            </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-neutral-900 tracking-tight">
               {categoryTitle}
             </h1>
           </div>
 
-          <div className="mt-4 md:mt-0 text-xs font-mono font-bold text-neutral-500">
+          <div className="text-xs font-mono font-bold text-neutral-500">
             SHOWING <span className="text-neutral-900 font-extrabold">{filteredProducts.length}</span> PRODUCTS
           </div>
         </div>
@@ -206,6 +290,8 @@ export const ProductGrid: React.FC = () => {
           {[
             { id: 'all', label: 'All Products' },
             { id: 'new', label: 'New Drops' },
+            { id: 'google', label: 'Google Brand' },
+            { id: 'pixel', label: 'Pixel' },
             { id: 'apparel', label: 'Apparel' },
             { id: 'accessories', label: 'Accessories' },
             { id: 'drinkware', label: 'Drinkware' },
@@ -216,6 +302,7 @@ export const ProductGrid: React.FC = () => {
             { id: 'cloud', label: 'Google Cloud' },
             { id: 'chrome', label: 'Chrome Dino' },
             { id: 'gemini', label: 'Gemini AI' },
+            { id: 'featured', label: 'Featured' },
             { id: 'best-sellers', label: 'Best Sellers' },
             { id: 'sale', label: 'Sale' },
           ].map((pill) => {

@@ -89,7 +89,7 @@ export const GoogleColoredText: React.FC<{ sizeClass?: string; includeMerch?: bo
   sizeClass = 'text-xl sm:text-2xl',
   includeMerch = true,
 }) => (
-  <span className={`font-brand font-bold tracking-tight inline-flex items-center select-none ${sizeClass}`}>
+  <span className={`font-extrabold tracking-tight inline-flex items-center select-none ${sizeClass}`}>
     <span className="text-[#4285F4]">G</span>
     <span className="text-[#EA4335]">o</span>
     <span className="text-[#FBBC05]">o</span>
@@ -97,8 +97,8 @@ export const GoogleColoredText: React.FC<{ sizeClass?: string; includeMerch?: bo
     <span className="text-[#34A853]">l</span>
     <span className="text-[#EA4335]">e</span>
     {includeMerch && (
-      <span className="font-brand font-normal text-[#5f6368] tracking-tight ml-2">
-        Merchandise Store
+      <span className="text-neutral-900 font-semibold tracking-normal ml-2">
+        Merch Store
       </span>
     )}
   </span>

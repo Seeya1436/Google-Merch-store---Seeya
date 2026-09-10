@@ -49,6 +49,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, compact = fal
               Best Seller
             </span>
           )}
+          {product.tags?.includes('limited') && (
+            <span className="px-2.5 py-1 bg-[#FBBC05] text-neutral-900 text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-xs">
+              Limited
+            </span>
+          )}
           {product.isSale && (
             <span className="px-2.5 py-1 bg-[#EA4335] text-white text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-xs">
               Sale
@@ -130,6 +135,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, compact = fal
               )}
             </div>
           )}
+
+          {/* Collection / Category Label */}
+          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 font-mono block mb-1">
+            {product.collection || product.subCategory || product.category}
+          </span>
 
           {/* Title */}
           <h3

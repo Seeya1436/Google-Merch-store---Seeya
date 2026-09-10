@@ -63,21 +63,12 @@ export const Footer: React.FC = () => {
                 <GoogleGIcon className="w-6 h-6" />
               </div>
               <div className="flex flex-col">
-                <div className="flex items-baseline space-x-1.5">
-                  <span className="font-brand font-bold text-white tracking-tight text-xl">
-                    <span className="text-[#4285F4]">G</span>
-                    <span className="text-[#EA4335]">o</span>
-                    <span className="text-[#FBBC05]">o</span>
-                    <span className="text-[#4285F4]">g</span>
-                    <span className="text-[#34A853]">l</span>
-                    <span className="text-[#EA4335]">e</span>
-                  </span>
-                  <span className="font-brand font-normal text-neutral-300 text-sm tracking-tight">
-                    Merchandise Store
-                  </span>
+                <div className="flex items-center">
+                  <GoogleColoredText sizeClass="text-lg font-bold" includeMerch={false} />
+                  <span className="text-white font-semibold text-lg ml-1.5">Merch Store</span>
                 </div>
                 <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-500">
-                  Official Merchandise &amp; Collections
+                  Mountain View, California
                 </span>
               </div>
             </div>

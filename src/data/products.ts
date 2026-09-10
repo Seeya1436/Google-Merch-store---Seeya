@@ -1,6 +1,7 @@
 import { Product } from '../types';
+import { EXPANDED_PRODUCTS } from './expandedProducts';
 
-export const PRODUCTS: Product[] = [
+const RAW_PRODUCTS: Product[] = [
   {
     id: 'g-hoodie-01',
     name: 'Google Minimalist Embroidery Hoodie',
@@ -1006,3 +1007,36 @@ export const PRODUCTS: Product[] = [
     ],
   },
 ];
+
+export const PRODUCTS: Product[] = [...RAW_PRODUCTS, ...EXPANDED_PRODUCTS].map((p) => {
+  const brand = p.brand || (
+    p.category === 'android' ? 'Android' :
+    p.category === 'youtube' ? 'YouTube' :
+    p.category === 'cloud' ? 'Google Cloud' :
+    p.category === 'chrome' ? 'Chrome' :
+    p.category === 'gemini' ? 'Gemini' :
+    p.category === 'pixel' ? 'Pixel' :
+    p.id.includes('android') || p.name.toLowerCase().includes('android') || p.name.toLowerCase().includes('bugdroid') ? 'Android' :
+    p.id.includes('yt') || p.name.toLowerCase().includes('youtube') ? 'YouTube' :
+    p.id.includes('cloud') || p.name.toLowerCase().includes('cloud') || p.name.toLowerCase().includes('kubernetes') ? 'Google Cloud' :
+    p.id.includes('dino') || p.name.toLowerCase().includes('dino') || p.name.toLowerCase().includes('chrome') ? 'Chrome' :
+    p.id.includes('pixel') || p.name.toLowerCase().includes('pixel') ? 'Pixel' :
+    p.id.includes('gemini') || p.name.toLowerCase().includes('gemini') ? 'Gemini' :
+    'Google'
+  );
+  const collection = p.collection || brand;
+  const tags = p.tags || [
+    p.category,
+    brand.toLowerCase().replace(/\s+/g, '-'),
+    ...(p.isNew ? ['new'] : []),
+    ...(p.isBestSeller ? ['best-sellers', 'featured'] : []),
+    ...(p.isSale ? ['sale'] : []),
+  ];
+  return {
+    ...p,
+    brand,
+    collection,
+    tags,
+  };
+});
+

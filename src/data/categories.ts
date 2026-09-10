@@ -37,6 +37,13 @@ export const CATEGORIES: CategoryInfo[] = [
     itemCount: 12,
   },
   {
+    id: 'retro',
+    name: '1998 Retro Collection',
+    shortDescription: 'Vintage Stanford garage energy, collegiate varsity fleece, and archival 90s computing nostalgia.',
+    bannerImage: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80',
+    itemCount: 8,
+  },
+  {
     id: 'android',
     name: 'Android Collection',
     shortDescription: 'Official Bugdroid figurines, squeeze bots, green mascots, and Android developer gear.',
@@ -69,7 +76,28 @@ export const CATEGORIES: CategoryInfo[] = [
     name: 'Gemini AI Collection',
     shortDescription: 'Modern iridescent gradient tees, researcher hoodies, and sleek tech organizer pouches.',
     bannerImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-    itemCount: 4,
+    itemCount: 8,
+  },
+  {
+    id: 'pixel',
+    name: 'Pixel Collection',
+    shortDescription: 'Modern cases, crossbodies, charging docks, and accessories inspired by Google Pixel hardware design.',
+    bannerImage: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80',
+    itemCount: 8,
+  },
+  {
+    id: 'google',
+    name: 'Google Brand Collection',
+    shortDescription: 'Original 4-color heritage gear, Mountain View campus hoodies, and Google iconic essentials.',
+    bannerImage: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
+    itemCount: 20,
+  },
+  {
+    id: 'featured',
+    name: 'Featured Drops',
+    shortDescription: 'Curated premium spotlight releases celebrating Google design innovation.',
+    bannerImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80',
+    itemCount: 16,
   },
   {
     id: 'new',

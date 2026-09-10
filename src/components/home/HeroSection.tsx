@@ -39,37 +39,45 @@ export const HeroSection: React.FC = () => {
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-none">
             <span className="inline-flex items-center">
               <span className="text-[#4285F4]">G</span>
-              <span className="text-[#EA4335]">o</span>
-              <span className="text-[#FBBC05]">o</span>
-              <span className="text-[#4285F4]">g</span>
-              <span className="text-[#34A853]">l</span>
-              <span className="text-[#EA4335]">e</span>
-            </span>, BUT <br />
+              <span className="text-[#EA4335]">O</span>
+              <span className="text-[#FBBC05]">O</span>
+              <span className="text-[#4285F4]">G</span>
+              <span className="text-[#34A853]">L</span>
+              <span className="text-[#EA4335]">E</span>
+            </span>{' '}
+            MERCH, <br />
             <span className="bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC05] to-[#34A853] bg-clip-text text-transparent">
-              MAKE IT YOURS.
+              BUT MAKE IT YOURS.
             </span>
           </h1>
 
-          {/* Supporting Copy */}
-          <p className="text-lg sm:text-xl text-neutral-300 font-normal leading-relaxed max-w-xl">
-            Wear it. Carry it. Collect it. Discover elevated streetwear, minimalist desk setups, and limited developer drops.
+          {/* Supporting Copy - Exact PRD Subtext */}
+          <p className="text-lg sm:text-2xl text-neutral-200 font-medium leading-relaxed max-w-xl">
+            Fresh drops. Iconic colours. Internet-approved essentials.
           </p>
 
-          {/* CTAs */}
+          {/* CTAs - Exact PRD Labels */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4">
             <button
               onClick={() => navigateToPLPWithCategory('new')}
-              className="px-8 py-4 bg-white text-black font-bold rounded-2xl text-sm sm:text-base hover:bg-neutral-100 transition-all shadow-xl hover:shadow-2xl flex items-center justify-center space-x-2 group hover:ring-2 hover:ring-[#4285F4]/50"
+              className="px-8 py-4 bg-white text-black font-extrabold rounded-2xl text-sm sm:text-base hover:bg-neutral-100 transition-all shadow-xl hover:shadow-2xl flex items-center justify-center space-x-2 group hover:ring-2 hover:ring-[#4285F4]/50"
             >
-              <span>SHOP NEW ARRIVALS</span>
+              <span>SHOP NEW</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
 
             <button
-              onClick={() => navigateToPLPWithCategory('all')}
+              onClick={() => {
+                const el = document.getElementById('shop-by-collection');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  navigateToPLPWithCategory('all');
+                }
+              }}
               className="px-8 py-4 bg-neutral-900/80 backdrop-blur-md text-white font-semibold rounded-2xl text-sm sm:text-base border border-white/20 hover:bg-white/10 transition-all flex items-center justify-center"
             >
-              EXPLORE ALL MERCH
+              EXPLORE COLLECTIONS
             </button>
           </div>
 

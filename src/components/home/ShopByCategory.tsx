@@ -8,7 +8,7 @@ export const ShopByCategory: React.FC = () => {
   const { navigateToPLPWithCategory } = useShop();
   const [activeTab, setActiveTab] = useState<'all' | 'franchises' | 'departments'>('all');
 
-  const franchiseIds = ['android', 'youtube', 'cloud', 'chrome', 'gemini'];
+  const franchiseIds = ['google', 'retro', 'pixel', 'android', 'youtube', 'cloud', 'chrome', 'gemini'];
   const departmentIds = ['apparel', 'accessories', 'drinkware', 'home', 'collectibles'];
 
   const displayCategories = CATEGORIES.filter((c) => {
@@ -18,7 +18,7 @@ export const ShopByCategory: React.FC = () => {
   });
 
   return (
-    <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="shop-by-collection" className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-20">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <div className="flex items-center space-x-2 mb-1.5">
@@ -27,7 +27,7 @@ export const ShopByCategory: React.FC = () => {
               Official Collections &amp; Departments
             </span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-neutral-900 tracking-tight font-brand">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-neutral-900 tracking-tight">
             SHOP BY COLLECTION
           </h2>
         </div>
@@ -106,7 +106,7 @@ export const ShopByCategory: React.FC = () => {
                   )}
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 font-brand">
+                <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
                   {category.name}
                 </h3>
 

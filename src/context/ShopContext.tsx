@@ -12,6 +12,14 @@ import {
   UserProfile,
 } from '../types';
 import { PRODUCTS } from '../data/products';
+import {
+  trackAddToCart,
+  trackRemoveFromCart,
+  trackViewItem,
+  trackAddToWishlist,
+  trackPurchase,
+  trackPageView,
+} from '../utils/analytics';
 
 interface ShopContextType {
   // Navigation & View
@@ -281,11 +289,24 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }
   const cartTotal = Math.max(0, cartSubtotal - promoDiscount);
 
+  // Page view tracking on activeView change
+  useEffect(() => {
+    trackPageView(`/${activeView}`, `Google Merch Store - ${activeView.toUpperCase()}`);
+  }, [activeView]);
+
   // Cart Actions
   const addToCart = (product: Product, color?: ProductColor, size?: string, quantity: number = 1) => {
     const chosenColor = color || product.colors[0];
     const chosenSize = size || (product.sizes ? product.sizes[0] : undefined);
     const cartItemId = `${product.id}-${chosenColor.name}-${chosenSize || 'default'}`;
+
+    const newCartItem: CartItem = {
+      id: cartItemId,
+      product,
+      selectedColor: chosenColor,
+      selectedSize: chosenSize,
+      quantity,
+    };
 
     setCart((prev) => {
       const existing = prev.find((item) => item.id === cartItemId);
@@ -294,17 +315,11 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           item.id === cartItemId ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      return [
-        ...prev,
-        {
-          id: cartItemId,
-          product,
-          selectedColor: chosenColor,
-          selectedSize: chosenSize,
-          quantity,
-        },
-      ];
+      return [...prev, newCartItem];
     });
+
+    // GA4 add_to_cart event
+    trackAddToCart(newCartItem);
 
     addToast(
       'Added to your bag ✓',
@@ -317,6 +332,10 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const removeFromCart = (cartItemId: string) => {
+    const itemToRemove = cart.find((item) => item.id === cartItemId);
+    if (itemToRemove) {
+      trackRemoveFromCart(itemToRemove);
+    }
     setCart((prev) => prev.filter((item) => item.id !== cartItemId));
   };
 
@@ -369,6 +388,9 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         addToast('Removed from Wishlist', product ? product.name : '', 'info');
         return prev.filter((id) => id !== productId);
       } else {
+        if (product) {
+          trackAddToWishlist(product);
+        }
         addToast('Saved to Wishlist ♡', product ? product.name : '', 'success', product?.images[0]);
         return [...prev, productId];
       }
@@ -393,6 +415,7 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // View Navigation Helpers
   const openProductDetail = (product: Product) => {
     setSelectedProduct(product);
+    trackViewItem(product);
     setActiveView('pdp');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -442,6 +465,7 @@ export const ShopProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     setOrders((prev) => [newOrder, ...prev]);
+    trackPurchase(newOrder);
     clearCart();
     setIsCheckoutOpen(false);
     addToast('Order Confirmed! 🎉', `Order #${newOrder.id} has been placed.`, 'success');

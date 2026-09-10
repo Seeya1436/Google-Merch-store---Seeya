@@ -5,11 +5,17 @@ export type CategoryId =
   | 'drinkware'
   | 'home'
   | 'collectibles'
+  | 'retro'
   | 'android'
   | 'youtube'
   | 'cloud'
   | 'chrome'
   | 'gemini'
+  | 'pixel'
+  | 'google'
+  | 'office'
+  | 'lifestyle'
+  | 'featured'
   | 'best-sellers'
   | 'sale';
 
@@ -47,6 +53,8 @@ export interface Product {
   price: number;
   originalPrice?: number;
   category: CategoryId;
+  collection?: string;
+  brand?: string;
   subCategory?: string;
   lifestyleCollection?: LifestyleTag[];
   colors: ProductColor[];
@@ -58,6 +66,7 @@ export interface Product {
   rating: number;
   reviewCount: number;
   inStock: boolean;
+  tags?: string[];
   details: string[];
   materials?: string;
   careInstructions?: string;

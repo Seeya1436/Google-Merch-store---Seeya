@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Search, X, TrendingUp, History, ArrowRight } from 'lucide-react';
+import { Search, X, TrendingUp, History, ArrowRight, Folder, Tag, Sparkles } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { PRODUCTS } from '../../data/products';
+import { CATEGORIES } from '../../data/categories';
 import { ProductCard } from './ProductCard';
 import { GoogleGIcon, GoogleColorStripe, GoogleColorDots } from '../common/GoogleLogo';
+import { trackSearch } from '../../utils/analytics';
 
 export const SearchOverlay: React.FC = () => {
   const {
@@ -16,6 +18,7 @@ export const SearchOverlay: React.FC = () => {
     clearRecentSearches,
     setFilters,
     setActiveView,
+    navigateToPLPWithCategory,
   } = useShop();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,20 +33,51 @@ export const SearchOverlay: React.FC = () => {
 
   if (!isSearchOpen) return null;
 
-  const POPULAR_SEARCHES = ['Google Hoodie', 'Pixel Cap', 'Mugs', 'Desk Mat', 'Collectibles', 'Tote Bag'];
+  const POPULAR_SEARCHES = ['1998 Retro', 'Google Hoodie', 'Pixel Cap', 'Mugs', 'Desk Mat', 'Collectibles', 'Tote Bag'];
 
-  const matchedProducts = searchQuery.trim()
+  const q = searchQuery.trim().toLowerCase();
+
+  // 1. Matched Products
+  const matchedProducts = q
     ? PRODUCTS.filter((p) => {
-        const q = searchQuery.toLowerCase();
         return (
           p.name.toLowerCase().includes(q) ||
           p.tagline.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
+          p.category.toLowerCase().includes(q) ||
+          (p.collection && p.collection.toLowerCase().includes(q)) ||
+          (p.brand && p.brand.toLowerCase().includes(q)) ||
+          (p.subCategory && p.subCategory.toLowerCase().includes(q)) ||
+          (p.tags && p.tags.some((t) => t.toLowerCase().includes(q)))
         );
       }).slice(0, 6)
     : [];
 
+  // 2. Matched Categories
+  const matchedCategories = q
+    ? CATEGORIES.filter((c) => c.name.toLowerCase().includes(q) || c.id.toLowerCase().includes(q))
+    : [];
+
+  // 3. Matched Collections
+  const ALL_COLLECTIONS = [
+    { name: '1998 Retro Collection', slug: 'retro', term: 'retro' },
+    { name: 'Google Brand Collection', slug: 'google', term: 'google' },
+    { name: 'Google Pixel Collection', slug: 'pixel', term: 'pixel' },
+    { name: 'Android Bugdroid Collection', slug: 'android', term: 'android' },
+    { name: 'YouTube Creator Collection', slug: 'youtube', term: 'youtube' },
+    { name: 'Google Cloud & Dev', slug: 'cloud', term: 'cloud' },
+  ];
+  const matchedCollections = q
+    ? ALL_COLLECTIONS.filter((col) => col.name.toLowerCase().includes(q) || col.term.toLowerCase().includes(q))
+    : [];
+
+  // 4. Suggested Related Searches
+  const contextualSuggestions = q
+    ? ['Retro', 'Hoodie', 'Mug', 'Cap', 'Desk Mat', 'Tote', 'Keychain', 'Stickers']
+        .filter((s) => s.toLowerCase().includes(q) || q.includes(s.toLowerCase()))
+    : [];
+
   const handleSelectSearch = (term: string) => {
+    trackSearch(term);
     setSearchQuery(term);
     addRecentSearch(term);
     setFilters((prev) => ({ ...prev, searchQuery: term, category: 'all' }));
@@ -51,8 +85,15 @@ export const SearchOverlay: React.FC = () => {
     setIsSearchOpen(false);
   };
 
+  const handleSelectCategory = (catId: any) => {
+    trackSearch(`category:${catId}`);
+    navigateToPLPWithCategory(catId);
+    setIsSearchOpen(false);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
+      trackSearch(searchQuery.trim());
       addRecentSearch(searchQuery);
       setFilters((prev) => ({ ...prev, searchQuery: searchQuery.trim(), category: 'all' }));
       setActiveView('plp');
@@ -65,7 +106,7 @@ export const SearchOverlay: React.FC = () => {
       {/* Google 4-Color Accent Line */}
       <GoogleColorStripe className="h-1 w-full" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-24">
         
         {/* Top Header */}
         <div className="flex items-center justify-between pb-6 border-b border-neutral-200">
@@ -74,7 +115,7 @@ export const SearchOverlay: React.FC = () => {
               <GoogleGIcon className="w-full h-full" />
             </div>
             <span className="text-xs font-bold font-mono uppercase tracking-widest text-neutral-600">
-              Search Official Google Store
+              Smart Search • Official Google Merchandise
             </span>
             <GoogleColorDots size="w-1 h-1" />
           </div>
@@ -89,8 +130,8 @@ export const SearchOverlay: React.FC = () => {
         </div>
 
         {/* Input Bar */}
-        <div className="py-8">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-500 font-mono mb-3">
+        <div className="py-6 sm:py-8">
+          <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-500 font-mono mb-3">
             WHAT ARE YOU LOOKING FOR?
           </h2>
 
@@ -104,7 +145,7 @@ export const SearchOverlay: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search Google merch, hoodies, caps, desk mats..."
+              placeholder="Search hoodie, 1998 retro, cap, desk mat, mug..."
               className="w-full bg-neutral-100 border-2 border-transparent focus:border-[#4285F4] rounded-3xl pl-14 pr-12 py-4 sm:py-5 text-lg sm:text-2xl font-bold text-neutral-900 placeholder-neutral-400 focus:outline-none transition-all shadow-inner"
             />
             {searchQuery && (
@@ -118,37 +159,112 @@ export const SearchOverlay: React.FC = () => {
           </div>
         </div>
 
-        {/* Search Results Preview */}
+        {/* PRD Section 16 Grouped Results Preview */}
         {searchQuery.trim() ? (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold font-mono uppercase tracking-wider text-neutral-700">
-                Matching Products ({matchedProducts.length})
-              </h3>
-              <button
-                onClick={() => handleSelectSearch(searchQuery)}
-                className="text-xs font-bold text-blue-600 hover:underline flex items-center"
-              >
-                View All Results <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </button>
-            </div>
-
-            {matchedProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {matchedProducts.map((product) => (
-                  <div key={product.id} onClick={() => setIsSearchOpen(false)}>
-                    <ProductCard product={product} />
+          <div className="space-y-8">
+            
+            {/* 1. Categorical & Collection suggestions bar */}
+            {(matchedCategories.length > 0 || matchedCollections.length > 0 || contextualSuggestions.length > 0) && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-3xl bg-neutral-50 border border-neutral-200">
+                {/* CATEGORIES */}
+                <div>
+                  <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 mb-2 flex items-center space-x-1">
+                    <Folder className="w-3 h-3 text-blue-500" />
+                    <span>CATEGORIES</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {matchedCategories.length > 0 ? (
+                      matchedCategories.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => handleSelectCategory(c.id)}
+                          className="px-2.5 py-1 rounded-xl bg-white border border-neutral-200 text-xs font-semibold text-neutral-800 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                        >
+                          {c.name}
+                        </button>
+                      ))
+                    ) : (
+                      <span className="text-xs text-neutral-400">No categories</span>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-neutral-500 text-sm">
-                No merchandise matched "<strong>{searchQuery}</strong>". Try searching for "hoodie", "cap", "bottle", or "desk".
+                </div>
+
+                {/* COLLECTIONS */}
+                <div>
+                  <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 mb-2 flex items-center space-x-1">
+                    <Sparkles className="w-3 h-3 text-amber-500" />
+                    <span>COLLECTIONS</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {matchedCollections.length > 0 ? (
+                      matchedCollections.map((col) => (
+                        <button
+                          key={col.slug}
+                          onClick={() => handleSelectSearch(col.term)}
+                          className="px-2.5 py-1 rounded-xl bg-white border border-neutral-200 text-xs font-semibold text-neutral-800 hover:border-amber-500 hover:text-amber-600 transition-colors"
+                        >
+                          {col.name}
+                        </button>
+                      ))
+                    ) : (
+                      <span className="text-xs text-neutral-400">No collections</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* TRENDING SEARCHES */}
+                <div>
+                  <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 mb-2 flex items-center space-x-1">
+                    <TrendingUp className="w-3 h-3 text-emerald-500" />
+                    <span>TRENDING SEARCHES</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {contextualSuggestions.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => handleSelectSearch(s)}
+                        className="px-2.5 py-1 rounded-xl bg-white border border-neutral-200 text-xs font-semibold text-neutral-800 hover:border-emerald-500 hover:text-emerald-600 transition-colors"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
+
+            {/* 2. MATCHING PRODUCTS */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-bold font-mono uppercase tracking-wider text-neutral-700">
+                  PRODUCTS ({matchedProducts.length})
+                </h3>
+                <button
+                  onClick={() => handleSelectSearch(searchQuery)}
+                  className="text-xs font-bold text-blue-600 hover:underline flex items-center"
+                >
+                  View All Products ({matchedProducts.length}) <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </button>
+              </div>
+
+              {matchedProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {matchedProducts.map((product) => (
+                    <div key={product.id} onClick={() => setIsSearchOpen(false)}>
+                      <ProductCard product={product} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-neutral-500 text-sm bg-neutral-50 rounded-3xl border border-neutral-200 p-6">
+                  No merchandise matched "<strong>{searchQuery}</strong>". Try searching for "hoodie", "1998 retro", "cap", or "bottle".
+                </div>
+              )}
+            </div>
+
           </div>
         ) : (
-          /* Popular & Recent Searches */
+          /* Popular & Recent Searches when input is empty */
           <div className="space-y-8 pt-4">
             
             {/* Popular Searches */}

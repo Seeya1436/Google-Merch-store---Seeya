@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Heart,
   Star,
@@ -16,11 +16,16 @@ import {
   ZoomIn,
   X,
   MessageSquarePlus,
+  Zap,
+  Layers,
+  Ruler,
+  Clock,
 } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { ProductColor, Product } from '../../types';
 import { PRODUCTS } from '../../data/products';
 import { ProductCard } from '../shop/ProductCard';
+import { GoogleColorDots } from '../common/GoogleLogo';
 
 export const ProductDetailView: React.FC = () => {
   const {
@@ -29,6 +34,7 @@ export const ProductDetailView: React.FC = () => {
     toggleWishlist,
     isInWishlist,
     setIsSizeGuideOpen,
+    setIsCheckoutOpen,
     addToast,
     navigateToPLPWithCategory,
   } = useShop();
@@ -43,22 +49,54 @@ export const ProductDetailView: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [activeAccordion, setActiveAccordion] = useState<'details' | 'materials' | 'shipping'>('details');
+  const [activeAccordion, setActiveAccordion] = useState<string>('description');
 
   const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [newReviewComment, setNewReviewComment] = useState('');
   const [newReviewName, setNewReviewName] = useState('');
+  const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
+
+  // Track recently viewed products in localStorage (PRD Section 15)
+  useEffect(() => {
+    if (selectedProduct) {
+      try {
+        const stored = JSON.parse(localStorage.getItem('g_merch_recent_pdp') || '[]');
+        const filtered = stored.filter((id: string) => id !== selectedProduct.id);
+        const updated = [selectedProduct.id, ...filtered].slice(0, 8);
+        localStorage.setItem('g_merch_recent_pdp', JSON.stringify(updated));
+        
+        const fullProducts = PRODUCTS.filter((p) => updated.includes(p.id) && p.id !== selectedProduct.id);
+        setRecentlyViewed(fullProducts);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [selectedProduct?.id]);
 
   const isWishlisted = isInWishlist(selectedProduct.id);
 
-  // Recommended products cross-sell
+  // Complete The Look (Complementary styling products - PRD Section 15)
+  const completeTheLookProducts = PRODUCTS.filter(
+    (p) =>
+      p.id !== selectedProduct.id &&
+      (selectedProduct.category === 'apparel'
+        ? p.category === 'accessories' || p.category === 'drinkware'
+        : p.category === 'apparel' || p.category === 'home')
+  ).slice(0, 3);
+
+  // Recommended products cross-sell (YOU MAY ALSO LIKE - PRD Section 15)
   const relatedProducts = PRODUCTS.filter(
     (p) => p.category === selectedProduct.category && p.id !== selectedProduct.id
   ).slice(0, 4);
 
   const handleAddToCart = () => {
     addToCart(selectedProduct, selectedColor, selectedSize, quantity);
+  };
+
+  const handleBuyNow = () => {
+    addToCart(selectedProduct, selectedColor, selectedSize, quantity);
+    setIsCheckoutOpen(true);
   };
 
   const handleShare = () => {
@@ -301,12 +339,21 @@ export const ProductDetailView: React.FC = () => {
 
               <button
                 onClick={handleAddToCart}
-                className="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white font-bold py-4 px-6 rounded-2xl text-sm sm:text-base flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transition-all"
+                className="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white font-extrabold py-4 px-6 rounded-2xl text-sm sm:text-base flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transition-all"
               >
                 <ShoppingBag className="w-5 h-5" />
-                <span>ADD TO BAG — ${(selectedProduct.price * quantity).toFixed(2)}</span>
+                <span>ADD TO CART — ${(selectedProduct.price * quantity).toFixed(2)}</span>
               </button>
             </div>
+
+            {/* Instant BUY NOW (PRD Section 14) */}
+            <button
+              onClick={handleBuyNow}
+              className="w-full bg-[#4285F4] hover:bg-blue-600 text-white font-extrabold py-4 px-6 rounded-2xl text-sm sm:text-base flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transition-all"
+            >
+              <Zap className="w-5 h-5 fill-white" />
+              <span>BUY NOW — EXPRESS CHECKOUT</span>
+            </button>
 
             <button
               onClick={() => toggleWishlist(selectedProduct.id)}
@@ -333,22 +380,36 @@ export const ProductDetailView: React.FC = () => {
             </div>
           </div>
 
-          {/* Expandable Accordion Tabs */}
+          {/* PRD Section 14 Expandable Product Information Accordions */}
           <div className="pt-4 border-t border-neutral-200 divide-y divide-neutral-200">
             
-            {/* Description & Features */}
-            <div className="py-4">
+            {/* 1. DESCRIPTION */}
+            <div className="py-3.5">
               <button
-                onClick={() => setActiveAccordion(activeAccordion === 'details' ? '' as any : 'details')}
+                onClick={() => setActiveAccordion(activeAccordion === 'description' ? '' : 'description')}
                 className="w-full flex items-center justify-between font-bold text-xs uppercase tracking-wider font-mono text-neutral-900"
               >
-                <span>Product Details & Specs</span>
+                <span>DESCRIPTION</span>
+                {activeAccordion === 'description' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+              {activeAccordion === 'description' && (
+                <div className="mt-3 text-xs text-neutral-600 leading-relaxed animate-in fade-in duration-200">
+                  <p>{selectedProduct.description}</p>
+                </div>
+              )}
+            </div>
+
+            {/* 2. DETAILS */}
+            <div className="py-3.5">
+              <button
+                onClick={() => setActiveAccordion(activeAccordion === 'details' ? '' : 'details')}
+                className="w-full flex items-center justify-between font-bold text-xs uppercase tracking-wider font-mono text-neutral-900"
+              >
+                <span>DETAILS</span>
                 {activeAccordion === 'details' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
-
               {activeAccordion === 'details' && (
-                <div className="mt-3 text-xs text-neutral-600 space-y-2 leading-relaxed animate-in fade-in duration-200">
-                  <p className="mb-2">{selectedProduct.description}</p>
+                <div className="mt-3 text-xs text-neutral-600 space-y-1.5 animate-in fade-in duration-200">
                   <ul className="list-disc pl-4 space-y-1 font-medium text-neutral-800">
                     {selectedProduct.details.map((detail, i) => (
                       <li key={i}>{detail}</li>
@@ -358,37 +419,101 @@ export const ProductDetailView: React.FC = () => {
               )}
             </div>
 
-            {/* Materials & Care */}
-            <div className="py-4">
+            {/* 3. MATERIAL */}
+            <div className="py-3.5">
               <button
-                onClick={() => setActiveAccordion(activeAccordion === 'materials' ? '' as any : 'materials')}
+                onClick={() => setActiveAccordion(activeAccordion === 'material' ? '' : 'material')}
                 className="w-full flex items-center justify-between font-bold text-xs uppercase tracking-wider font-mono text-neutral-900"
               >
-                <span>Materials & Care</span>
-                {activeAccordion === 'materials' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                <span>MATERIAL</span>
+                {activeAccordion === 'material' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
-
-              {activeAccordion === 'materials' && (
+              {activeAccordion === 'material' && (
                 <div className="mt-3 text-xs text-neutral-600 space-y-2 leading-relaxed animate-in fade-in duration-200">
-                  <p><strong>Composition:</strong> {selectedProduct.materials || 'Premium Heavyweight Cotton / Synthetic Blend'}</p>
-                  <p><strong>Care Instructions:</strong> {selectedProduct.careInstructions || 'Machine wash cold inside out with like colors. Tumble dry low.'}</p>
+                  <p><strong>Composition:</strong> {selectedProduct.materials || '100% Certified Heavyweight Combed Cotton / Recycled Performance Blends'}</p>
+                  <p><strong>Care:</strong> {selectedProduct.careInstructions || 'Machine wash cold inside out. Tumble dry low.'}</p>
                 </div>
               )}
             </div>
 
-            {/* Shipping & Returns */}
-            <div className="py-4">
+            {/* 4. SIZE GUIDE */}
+            <div className="py-3.5">
               <button
-                onClick={() => setActiveAccordion(activeAccordion === 'shipping' ? '' as any : 'shipping')}
+                onClick={() => setActiveAccordion(activeAccordion === 'sizeguide' ? '' : 'sizeguide')}
                 className="w-full flex items-center justify-between font-bold text-xs uppercase tracking-wider font-mono text-neutral-900"
               >
-                <span>Shipping & Returns</span>
+                <span>SIZE GUIDE</span>
+                {activeAccordion === 'sizeguide' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+              {activeAccordion === 'sizeguide' && (
+                <div className="mt-3 text-xs text-neutral-600 space-y-2 animate-in fade-in duration-200">
+                  <p>Standard unisex streetwear fit. We recommend ordering true to size, or one size up for an oversized drop-shoulder aesthetic.</p>
+                  <button
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="inline-flex items-center space-x-1 font-bold text-blue-600 hover:underline"
+                  >
+                    <Ruler className="w-3.5 h-3.5 mr-1" />
+                    <span>Open Interactive Measurement Table</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 5. SHIPPING */}
+            <div className="py-3.5">
+              <button
+                onClick={() => setActiveAccordion(activeAccordion === 'shipping' ? '' : 'shipping')}
+                className="w-full flex items-center justify-between font-bold text-xs uppercase tracking-wider font-mono text-neutral-900"
+              >
+                <span>SHIPPING</span>
                 {activeAccordion === 'shipping' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
-
               {activeAccordion === 'shipping' && (
-                <div className="mt-3 text-xs text-neutral-600 space-y-2 leading-relaxed animate-in fade-in duration-200">
-                  <p>Orders ship within 24 hours from Google Logistics Hub in California. Standard delivery takes 2–4 business days. Pre-paid return shipping label included in every box.</p>
+                <div className="mt-3 text-xs text-neutral-600 leading-relaxed animate-in fade-in duration-200 space-y-1">
+                  <p>• Standard Delivery: 2–4 business days (FREE on orders over $75)</p>
+                  <p>• Express Next-Day Courier: Available at checkout</p>
+                  <p>• Dispatched in eco-friendly 100% recyclable FSC-certified packaging</p>
+                </div>
+              )}
+            </div>
+
+            {/* 6. RETURNS */}
+            <div className="py-3.5">
+              <button
+                onClick={() => setActiveAccordion(activeAccordion === 'returns' ? '' : 'returns')}
+                className="w-full flex items-center justify-between font-bold text-xs uppercase tracking-wider font-mono text-neutral-900"
+              >
+                <span>RETURNS</span>
+                {activeAccordion === 'returns' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+              {activeAccordion === 'returns' && (
+                <div className="mt-3 text-xs text-neutral-600 leading-relaxed animate-in fade-in duration-200">
+                  <p>Free 30-day hassle-free returns on all unworn items with original tags. Pre-printed prepaid shipping label included inside your delivery box.</p>
+                </div>
+              )}
+            </div>
+
+            {/* 7. REVIEWS */}
+            <div className="py-3.5">
+              <button
+                onClick={() => setActiveAccordion(activeAccordion === 'reviews' ? '' : 'reviews')}
+                className="w-full flex items-center justify-between font-bold text-xs uppercase tracking-wider font-mono text-neutral-900"
+              >
+                <span>REVIEWS ({selectedProduct.reviewCount})</span>
+                {activeAccordion === 'reviews' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+              {activeAccordion === 'reviews' && (
+                <div className="mt-3 text-xs text-neutral-600 space-y-2 animate-in fade-in duration-200">
+                  <p>Rated <strong>{selectedProduct.rating} / 5.0</strong> by Google merchandise community members.</p>
+                  <button
+                    onClick={() => {
+                      const el = document.getElementById('community-reviews-section');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="font-bold text-blue-600 hover:underline"
+                  >
+                    Jump to Community Reviews ↓
+                  </button>
                 </div>
               )}
             </div>
@@ -399,8 +524,8 @@ export const ProductDetailView: React.FC = () => {
 
       </div>
 
-      {/* Customer Reviews Section */}
-      <div className="pt-12 border-t border-neutral-200 mb-16">
+      {/* Community Customer Reviews Section */}
+      <div id="community-reviews-section" className="pt-12 border-t border-neutral-200 mb-16 scroll-mt-24">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
           <div>
             <h3 className="text-xl sm:text-2xl font-extrabold text-neutral-900 tracking-tight">
@@ -450,14 +575,54 @@ export const ProductDetailView: React.FC = () => {
         </div>
       </div>
 
-      {/* Recommended Products Carousel ("YOU MIGHT ALSO LIKE") */}
-      {relatedProducts.length > 0 && (
-        <div className="pt-12 border-t border-neutral-200">
+      {/* PRD Section 15 Recommendations: 1. COMPLETE THE LOOK */}
+      {completeTheLookProducts.length > 0 && (
+        <div className="pt-12 border-t border-neutral-200 mb-14">
+          <div className="flex items-center space-x-2 text-xs font-bold font-mono text-neutral-400 uppercase tracking-widest mb-1.5">
+            <Layers className="w-4 h-4 text-blue-500" />
+            <span>Curated Styling • Complementary Items</span>
+          </div>
           <h3 className="text-xl sm:text-2xl font-extrabold text-neutral-900 tracking-tight mb-6">
-            YOU MIGHT ALSO LIKE
+            COMPLETE THE LOOK
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {completeTheLookProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* PRD Section 15 Recommendations: 2. YOU MAY ALSO LIKE */}
+      {relatedProducts.length > 0 && (
+        <div className="pt-12 border-t border-neutral-200 mb-14">
+          <div className="flex items-center space-x-2 text-xs font-bold font-mono text-neutral-400 uppercase tracking-widest mb-1.5">
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            <span>Similar Category Drops</span>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-extrabold text-neutral-900 tracking-tight mb-6">
+            YOU MAY ALSO LIKE
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* PRD Section 15 Recommendations: 3. RECENTLY VIEWED */}
+      {recentlyViewed.length > 0 && (
+        <div className="pt-12 border-t border-neutral-200">
+          <div className="flex items-center space-x-2 text-xs font-bold font-mono text-neutral-400 uppercase tracking-widest mb-1.5">
+            <Clock className="w-4 h-4 text-neutral-500" />
+            <span>Your Browsing History</span>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-extrabold text-neutral-900 tracking-tight mb-6">
+            RECENTLY VIEWED
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {recentlyViewed.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

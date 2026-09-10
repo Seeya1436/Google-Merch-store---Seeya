@@ -23,11 +23,8 @@ export const Header: React.FC = () => {
     { id: 'apparel', label: 'Apparel' },
     { id: 'accessories', label: 'Accessories' },
     { id: 'drinkware', label: 'Drinkware' },
-    { id: 'home', label: 'Home & Office' },
+    { id: 'home', label: 'Home & Lifestyle' },
     { id: 'collectibles', label: 'Collectibles' },
-    { id: 'android', label: 'Android', badge: 'Bot', badgeColor: 'bg-[#34A853]/15 text-[#34A853]' },
-    { id: 'youtube', label: 'YouTube', badge: 'Play', badgeColor: 'bg-[#EA4335]/15 text-[#EA4335]' },
-    { id: 'cloud', label: 'Cloud' },
     { id: 'best-sellers', label: 'Best Sellers', badge: 'Top', badgeColor: 'bg-[#FBBC05]/20 text-neutral-900' },
     { id: 'sale', label: 'Sale', badge: 'Hot', badgeColor: 'bg-[#EA4335]/10 text-[#EA4335]' },
   ];
@@ -60,36 +57,28 @@ export const Header: React.FC = () => {
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
 
-          {/* Logo & Brand Identity in Original Google Font */}
+          {/* Logo & Brand Identity */}
           <div
             className="flex items-center space-x-3 cursor-pointer group select-none"
             onClick={handleLogoClick}
             title="Google Merchandise Store Home"
           >
             {/* Authentic Google Multi-Color G Emblem */}
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white border border-neutral-200/80 shadow-xs flex items-center justify-center p-2 group-hover:scale-105 group-hover:shadow-md transition-all duration-200">
-              <GoogleGIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+            <div className="w-10 h-10 rounded-2xl bg-white border border-neutral-200/80 shadow-xs flex items-center justify-center p-2 group-hover:scale-105 group-hover:shadow-md transition-all duration-200">
+              <GoogleGIcon className="w-6 h-6" />
             </div>
 
             <div className="flex flex-col">
-              <div className="flex items-baseline space-x-1.5">
-                {/* Official Google Brand in Product Sans font */}
-                <span className="font-brand font-bold text-lg sm:text-2xl tracking-tight inline-flex items-center">
-                  <span className="text-[#4285F4]">G</span>
-                  <span className="text-[#EA4335]">o</span>
-                  <span className="text-[#FBBC05]">o</span>
-                  <span className="text-[#4285F4]">g</span>
-                  <span className="text-[#34A853]">l</span>
-                  <span className="text-[#EA4335]">e</span>
-                </span>
-                <span className="font-brand font-medium text-[#5f6368] text-xs sm:text-base tracking-tight whitespace-nowrap">
-                  Merchandise Store
+              <div className="flex items-center">
+                <GoogleColoredText sizeClass="text-lg sm:text-xl font-bold" includeMerch={false} />
+                <span className="font-semibold text-neutral-900 ml-1.5 text-base sm:text-lg tracking-tight">
+                  Merch Store
                 </span>
               </div>
               <div className="flex items-center space-x-1.5 mt-0.5">
                 <GoogleColorDots size="w-1 h-1" />
                 <span className="text-[9px] uppercase font-bold tracking-widest text-neutral-400 font-mono">
-                  Mountain View, CA &bull; Official
+                  Mountain View, CA
                 </span>
               </div>
             </div>
