@@ -5,6 +5,11 @@ export type CategoryId =
   | 'drinkware'
   | 'home'
   | 'collectibles'
+  | 'android'
+  | 'youtube'
+  | 'cloud'
+  | 'chrome'
+  | 'gemini'
   | 'best-sellers'
   | 'sale';
 
@@ -14,7 +19,9 @@ export type LifestyleTag =
   | 'weekend'
   | 'coffee'
   | 'fit'
-  | 'collection';
+  | 'collection'
+  | 'creator'
+  | 'campus';
 
 export interface ProductColor {
   name: string;

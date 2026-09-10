@@ -59,12 +59,12 @@ export const Footer: React.FC = () => {
           {/* Brand Col */}
           <div className="col-span-2 space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-md p-1.5">
+              <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-md p-2">
                 <GoogleGIcon className="w-6 h-6" />
               </div>
               <div className="flex flex-col">
-                <div className="flex items-center">
-                  <span className="font-bold text-white tracking-tight text-lg">
+                <div className="flex items-baseline space-x-1.5">
+                  <span className="font-brand font-bold text-white tracking-tight text-xl">
                     <span className="text-[#4285F4]">G</span>
                     <span className="text-[#EA4335]">o</span>
                     <span className="text-[#FBBC05]">o</span>
@@ -72,12 +72,17 @@ export const Footer: React.FC = () => {
                     <span className="text-[#34A853]">l</span>
                     <span className="text-[#EA4335]">e</span>
                   </span>
-                  <span className="text-white font-medium text-lg ml-1.5">Merch Store</span>
+                  <span className="font-brand font-normal text-neutral-300 text-sm tracking-tight">
+                    Merchandise Store
+                  </span>
                 </div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-500">
+                  Official Merchandise &amp; Collections
+                </span>
               </div>
             </div>
 
-            <p className="text-neutral-400 text-xs leading-relaxed max-w-sm">
+            <p className="text-neutral-400 text-xs leading-relaxed max-w-sm font-sans">
               The official merchandise platform designed for tech enthusiasts, creators, and Google fans worldwide. Engineered in Mountain View with purpose and sustainability.
             </p>
 
@@ -89,7 +94,7 @@ export const Footer: React.FC = () => {
 
           {/* Shop */}
           <div>
-            <h5 className="text-white text-xs font-bold uppercase tracking-wider mb-4 font-mono">Shop</h5>
+            <h5 className="text-white text-xs font-bold uppercase tracking-wider mb-4 font-mono">Shop Categories</h5>
             <ul className="space-y-2.5 text-xs text-neutral-400">
               <li>
                 <button onClick={() => navigateToPLPWithCategory('new')} className="hover:text-white transition-colors">
@@ -119,6 +124,48 @@ export const Footer: React.FC = () => {
               <li>
                 <button onClick={() => navigateToPLPWithCategory('collectibles')} className="hover:text-white transition-colors">
                   Limited Collectibles
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Collections */}
+          <div>
+            <h5 className="text-white text-xs font-bold uppercase tracking-wider mb-4 font-mono">Brand Collections</h5>
+            <ul className="space-y-2.5 text-xs text-neutral-400">
+              <li>
+                <button onClick={() => navigateToPLPWithCategory('android')} className="hover:text-white transition-colors flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#34A853] mr-2"></span>
+                  Android Collection
+                </button>
+              </li>
+              <li>
+                <button onClick={() => navigateToPLPWithCategory('youtube')} className="hover:text-white transition-colors flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#EA4335] mr-2"></span>
+                  YouTube Creator Merch
+                </button>
+              </li>
+              <li>
+                <button onClick={() => navigateToPLPWithCategory('cloud')} className="hover:text-white transition-colors flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4] mr-2"></span>
+                  Google Cloud & Dev
+                </button>
+              </li>
+              <li>
+                <button onClick={() => navigateToPLPWithCategory('chrome')} className="hover:text-white transition-colors flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FBBC05] mr-2"></span>
+                  Chrome Dinosaur
+                </button>
+              </li>
+              <li>
+                <button onClick={() => navigateToPLPWithCategory('gemini')} className="hover:text-white transition-colors flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2"></span>
+                  Gemini AI Drops
+                </button>
+              </li>
+              <li>
+                <button onClick={() => navigateToPLPWithCategory('best-sellers')} className="hover:text-white transition-colors">
+                  Best Sellers
                 </button>
               </li>
             </ul>

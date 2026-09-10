@@ -25,12 +25,32 @@ export const ProductGrid: React.FC = () => {
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((product) => {
-      // Category filter
-      if (filters.category !== 'all' && product.category !== filters.category) {
-        if (filters.category === 'new' && !product.isNew) return false;
-        if (filters.category === 'best-sellers' && !product.isBestSeller) return false;
-        if (filters.category === 'sale' && !product.isSale) return false;
-        if (!['new', 'best-sellers', 'sale'].includes(filters.category)) return false;
+      // Category & Collection filter
+      if (filters.category !== 'all') {
+        if (filters.category === 'new') {
+          if (!product.isNew) return false;
+        } else if (filters.category === 'best-sellers') {
+          if (!product.isBestSeller) return false;
+        } else if (filters.category === 'sale') {
+          if (!product.isSale) return false;
+        } else if (filters.category === 'android') {
+          const isAndroid = product.category === 'android' || product.id.includes('android') || product.name.toLowerCase().includes('android') || product.name.toLowerCase().includes('bugdroid');
+          if (!isAndroid) return false;
+        } else if (filters.category === 'youtube') {
+          const isYt = product.category === 'youtube' || product.id.includes('yt') || product.name.toLowerCase().includes('youtube');
+          if (!isYt) return false;
+        } else if (filters.category === 'cloud') {
+          const isCloud = product.category === 'cloud' || product.id.includes('cloud') || product.name.toLowerCase().includes('cloud') || product.name.toLowerCase().includes('gopher');
+          if (!isCloud) return false;
+        } else if (filters.category === 'chrome') {
+          const isChrome = product.category === 'chrome' || product.id.includes('dino') || product.name.toLowerCase().includes('chrome') || product.name.toLowerCase().includes('dinosaur');
+          if (!isChrome) return false;
+        } else if (filters.category === 'gemini') {
+          const isGemini = product.category === 'gemini' || product.name.toLowerCase().includes('gemini');
+          if (!isGemini) return false;
+        } else if (product.category !== filters.category) {
+          return false;
+        }
       }
 
       // Lifestyle filter
@@ -180,6 +200,41 @@ export const ProductGrid: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Quick Collection Switcher Pills */}
+        <div className="flex items-center space-x-2 overflow-x-auto pt-4 pb-1 scrollbar-none">
+          {[
+            { id: 'all', label: 'All Products' },
+            { id: 'new', label: 'New Drops' },
+            { id: 'apparel', label: 'Apparel' },
+            { id: 'accessories', label: 'Accessories' },
+            { id: 'drinkware', label: 'Drinkware' },
+            { id: 'home', label: 'Home & Office' },
+            { id: 'collectibles', label: 'Collectibles' },
+            { id: 'android', label: 'Android' },
+            { id: 'youtube', label: 'YouTube' },
+            { id: 'cloud', label: 'Google Cloud' },
+            { id: 'chrome', label: 'Chrome Dino' },
+            { id: 'gemini', label: 'Gemini AI' },
+            { id: 'best-sellers', label: 'Best Sellers' },
+            { id: 'sale', label: 'Sale' },
+          ].map((pill) => {
+            const isSelected = filters.category === pill.id;
+            return (
+              <button
+                key={pill.id}
+                onClick={() => setFilters((prev) => ({ ...prev, category: pill.id as any }))}
+                className={`text-xs font-semibold px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all select-none ${
+                  isSelected
+                    ? 'bg-[#4285F4] text-white shadow-xs scale-105 font-bold'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                }`}
+              >
+                {pill.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main Grid Layout */}

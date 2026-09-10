@@ -83,13 +83,13 @@ export const GoogleWordmarkSVG: React.FC<{ className?: string; height?: number }
 );
 
 /**
- * Google Styled Brand Text with iconic 4-color letters
+ * Google Styled Brand Text with iconic 4-color letters in original Product Sans font
  */
 export const GoogleColoredText: React.FC<{ sizeClass?: string; includeMerch?: boolean }> = ({
   sizeClass = 'text-xl sm:text-2xl',
   includeMerch = true,
 }) => (
-  <span className={`font-extrabold tracking-tight inline-flex items-center select-none ${sizeClass}`}>
+  <span className={`font-brand font-bold tracking-tight inline-flex items-center select-none ${sizeClass}`}>
     <span className="text-[#4285F4]">G</span>
     <span className="text-[#EA4335]">o</span>
     <span className="text-[#FBBC05]">o</span>
@@ -97,12 +97,49 @@ export const GoogleColoredText: React.FC<{ sizeClass?: string; includeMerch?: bo
     <span className="text-[#34A853]">l</span>
     <span className="text-[#EA4335]">e</span>
     {includeMerch && (
-      <span className="text-neutral-900 font-semibold tracking-normal ml-2">
-        Merch Store
+      <span className="font-brand font-normal text-[#5f6368] tracking-tight ml-2">
+        Merchandise Store
       </span>
     )}
   </span>
 );
+
+/**
+ * Official Google Merchandise Store Brand Logo
+ * Features original Google Wordmark SVG + "Merchandise Store" in Google's original Product Sans typeface
+ */
+export const GoogleMerchandiseStoreBrand: React.FC<{
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  showSubtitle?: boolean;
+}> = ({ className = '', size = 'md', showSubtitle = true }) => {
+  const heights = {
+    sm: { svg: 'h-5', text: 'text-sm', sub: 'text-[9px]' },
+    md: { svg: 'h-6 sm:h-7', text: 'text-base sm:text-lg', sub: 'text-[10px]' },
+    lg: { svg: 'h-8 sm:h-9', text: 'text-xl sm:text-2xl', sub: 'text-xs' },
+  };
+
+  const current = heights[size];
+
+  return (
+    <div className={`flex items-center space-x-2.5 select-none ${className}`}>
+      {/* Official Google Vector Wordmark */}
+      <GoogleWordmarkSVG className={`${current.svg} w-auto`} />
+      
+      {/* Divider and Merchandise Store in Original Google Sans / Product Sans font */}
+      <div className="flex flex-col border-l border-neutral-300 pl-2.5">
+        <span className={`font-brand font-medium text-[#5f6368] tracking-tight ${current.text} leading-none`}>
+          Merchandise Store
+        </span>
+        {showSubtitle && (
+          <span className={`font-brand text-neutral-400 font-normal tracking-wide mt-0.5 ${current.sub}`}>
+            Official Collection
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
 
 /**
  * Authentic Google Four-Color Accent Stripe

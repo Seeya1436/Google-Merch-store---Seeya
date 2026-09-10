@@ -8,7 +8,7 @@ export const JustDroppedCarousel: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { navigateToPLPWithCategory } = useShop();
 
-  const newProducts = PRODUCTS.filter((p) => p.isNew || p.category === 'new').slice(0, 8);
+  const newProducts = PRODUCTS.filter((p) => p.isNew || p.category === 'new').slice(0, 14);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
