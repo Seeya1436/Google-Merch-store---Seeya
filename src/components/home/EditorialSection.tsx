@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, History, Sparkles, Plus, Check } from 'lucide-react';
+import { ArrowRight, History, Plus } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { GoogleColorDots } from '../common/GoogleLogo';
 import { PRODUCTS } from '../../data/products';
