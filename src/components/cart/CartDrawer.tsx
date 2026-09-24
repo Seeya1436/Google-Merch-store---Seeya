@@ -97,8 +97,12 @@ export const CartDrawer: React.FC = () => {
                 <img
                   src={item.product.images[0]}
                   alt={item.product.name}
-                  className="w-20 h-20 rounded-xl object-cover bg-neutral-200 shrink-0 border border-neutral-200"
+                  className="w-20 h-20 rounded-xl object-contain bg-white p-1 shrink-0 border border-neutral-200"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
+                  }}
                 />
 
                 <div className="flex-1 min-w-0 flex flex-col justify-between">
@@ -173,19 +177,23 @@ export const CartDrawer: React.FC = () => {
                       <img
                         src={p.images[0]}
                         alt=""
-                        className="w-12 h-12 rounded-lg object-cover bg-neutral-100 shrink-0"
+                        className="w-12 h-12 rounded-lg object-contain bg-white p-1 shrink-0 border border-neutral-200"
                         referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
+                        }}
                       />
                       <div className="min-w-0">
                         <h6 className="text-xs font-semibold text-neutral-900 truncate max-w-[160px]">
                           {p.name}
                         </h6>
-                        <span className="text-xs font-bold text-neutral-900">${p.price}</span>
+                        <span className="text-xs font-bold text-neutral-900">${p.price.toFixed(2)}</span>
                       </div>
                     </div>
 
                     <button
-                      onClick={() => addToCart(p)}
+                      onClick={() => addToCart(p, p.colors[0], p.sizes ? p.sizes[0] : undefined, 1)}
                       className="px-3 py-1.5 bg-neutral-900 text-white rounded-lg text-xs font-bold hover:bg-neutral-800 flex items-center space-x-1 shrink-0"
                     >
                       <Plus className="w-3 h-3" />
@@ -263,13 +271,28 @@ export const CartDrawer: React.FC = () => {
               </div>
             </div>
 
-            {/* Checkout CTA */}
+            {/* Express Google Pay 1-Click Button */}
             <button
               onClick={() => {
                 setIsCartOpen(false);
                 setIsCheckoutOpen(true);
               }}
-              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-bold py-4 rounded-2xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transition-all"
+              className="w-full bg-black hover:bg-neutral-900 text-white font-extrabold py-3.5 rounded-2xl text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-md hover:shadow-lg transition-all border border-neutral-800"
+            >
+              <span>Buy with</span>
+              <span className="font-sans font-bold flex items-center space-x-0.5">
+                <span className="text-[#4285F4]">G</span>
+                <span className="text-white">Pay</span>
+              </span>
+            </button>
+
+            {/* Standard Checkout CTA */}
+            <button
+              onClick={() => {
+                setIsCartOpen(false);
+                setIsCheckoutOpen(true);
+              }}
+              className="w-full bg-[#4285F4] hover:bg-blue-600 text-white font-bold py-3.5 rounded-2xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transition-all"
             >
               <span>PROCEED TO CHECKOUT</span>
               <ArrowRight className="w-4 h-4" />

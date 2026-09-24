@@ -90,6 +90,58 @@ export const ProductDetailView: React.FC = () => {
     (p) => p.category === selectedProduct.category && p.id !== selectedProduct.id
   ).slice(0, 4);
 
+  // Frequently Bought Together Bundle Calculation (PRD Section 15 & Part 13)
+  const fbtProducts = React.useMemo(() => {
+    const ids = selectedProduct.frequentlyBoughtTogetherIds || [];
+    const found = PRODUCTS.filter((p) => ids.includes(p.code || p.id));
+    if (found.length >= 2) return found.slice(0, 2);
+    // Fallback to complementary category items
+    return PRODUCTS.filter(
+      (p) => p.id !== selectedProduct.id && p.itemType !== selectedProduct.itemType
+    ).slice(0, 2);
+  }, [selectedProduct]);
+
+  const [bundleChecked, setBundleChecked] = useState<Record<string, boolean>>({
+    main: true,
+    item1: true,
+    item2: true,
+  });
+
+  // Bundle pricing
+  const bundleItems = [
+    { product: selectedProduct, key: 'main', active: bundleChecked.main },
+    ...(fbtProducts[0] ? [{ product: fbtProducts[0], key: 'item1', active: bundleChecked.item1 }] : []),
+    ...(fbtProducts[1] ? [{ product: fbtProducts[1], key: 'item2', active: bundleChecked.item2 }] : []),
+  ];
+
+  const bundleTotal = bundleItems
+    .filter((b) => b.active)
+    .reduce((sum, b) => sum + b.product.price, 0);
+
+  const bundleSavings = bundleItems.filter((b) => b.active).length >= 2 ? bundleTotal * 0.1 : 0;
+  const bundleDiscountedTotal = bundleTotal - bundleSavings;
+
+  const handleAddBundleToCart = () => {
+    let addedCount = 0;
+    bundleItems.forEach((b) => {
+      if (b.active) {
+        addToCart(
+          b.product,
+          b.product.colors[0],
+          b.product.sizes ? b.product.sizes[0] : undefined,
+          1
+        );
+        addedCount++;
+      }
+    });
+    addToast(
+      `Bundle Added to Bag! (${addedCount} items)`,
+      `Saved ${bundleSavings.toFixed(2)} with official bundle savings.`,
+      'success',
+      selectedProduct.images[0]
+    );
+  };
+
   const handleAddToCart = () => {
     addToCart(selectedProduct, selectedColor, selectedSize, quantity);
   };
@@ -150,31 +202,44 @@ export const ProductDetailView: React.FC = () => {
                 <button
                   key={idx}
                   onClick={() => setSelectedImageIndex(idx)}
-                  className={`w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all bg-neutral-100 ${
+                  className={`w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all bg-white p-1.5 flex items-center justify-center ${
                     selectedImageIndex === idx
                       ? 'border-neutral-900 ring-2 ring-neutral-900/20 scale-105'
                       : 'border-neutral-200 opacity-70 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img
+                    src={img}
+                    alt=""
+                    className="w-full h-full object-contain"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
+                    }}
+                  />
                 </button>
               ))}
             </div>
           )}
 
           {/* Main Stage Image */}
-          <div className="relative flex-1 aspect-square rounded-3xl overflow-hidden bg-neutral-100 border border-neutral-200 shadow-sm group">
+          <div className="relative flex-1 aspect-square rounded-3xl overflow-hidden bg-white border border-neutral-200 shadow-xs group p-6 sm:p-10 flex items-center justify-center">
             <img
               src={selectedProduct.images[selectedImageIndex]}
               alt={selectedProduct.name}
-              className="w-full h-full object-cover object-center cursor-zoom-in"
+              className="w-full h-full object-contain object-center cursor-zoom-in group-hover:scale-105 transition-transform duration-300"
               onClick={() => setLightboxOpen(true)}
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
+              }}
             />
 
             <button
               onClick={() => setLightboxOpen(true)}
-              className="absolute bottom-4 right-4 p-3 bg-white/90 backdrop-blur-md text-neutral-800 rounded-2xl shadow-md hover:bg-white transition-all opacity-80 group-hover:opacity-100"
+              className="absolute bottom-4 right-4 p-3 bg-white/90 backdrop-blur-md text-neutral-800 rounded-2xl shadow-md hover:bg-white transition-all opacity-80 group-hover:opacity-100 border border-neutral-200"
               title="Expand Image"
             >
               <ZoomIn className="w-5 h-5" />
@@ -524,7 +589,161 @@ export const ProductDetailView: React.FC = () => {
 
       </div>
 
-      {/* Community Customer Reviews Section */}
+      {/* Frequently Bought Together Bundle Widget (PRD Part 13 & 15) */}
+      {fbtProducts.length > 0 && (
+        <div className="my-12 p-6 sm:p-8 bg-neutral-50 rounded-3xl border border-neutral-200 shadow-sm">
+          <div className="flex items-center space-x-2 text-xs font-mono font-bold uppercase tracking-widest text-[#4285F4] mb-1">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Curated Bundle Deal • Save 10%</span>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight mb-6">
+            FREQUENTLY BOUGHT TOGETHER
+          </h3>
+
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8">
+            {/* Visual Products Row */}
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              {/* Product 1: Current */}
+              <div
+                className={`relative w-28 sm:w-36 aspect-square rounded-2xl bg-white p-3 border-2 flex items-center justify-center transition-all ${
+                  bundleChecked.main ? 'border-neutral-900 shadow-md' : 'border-neutral-200 opacity-40'
+                }`}
+              >
+                <img
+                  src={selectedProduct.images[0]}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-contain"
+                />
+                <span className="absolute bottom-1 right-1 text-[9px] font-bold font-mono bg-neutral-900 text-white px-1.5 py-0.5 rounded">
+                  This Item
+                </span>
+              </div>
+
+              <span className="text-xl font-bold text-neutral-400">+</span>
+
+              {/* Product 2: First companion */}
+              {fbtProducts[0] && (
+                <div
+                  className={`relative w-28 sm:w-36 aspect-square rounded-2xl bg-white p-3 border-2 flex items-center justify-center transition-all ${
+                    bundleChecked.item1 ? 'border-neutral-900 shadow-md' : 'border-neutral-200 opacity-40'
+                  }`}
+                >
+                  <img
+                    src={fbtProducts[0].images[0]}
+                    alt={fbtProducts[0].name}
+                    className="w-full h-full object-contain"
+                  />
+                  <span className="absolute bottom-1 right-1 text-[9px] font-bold font-mono bg-blue-600 text-white px-1.5 py-0.5 rounded">
+                    Pair #1
+                  </span>
+                </div>
+              )}
+
+              {/* Product 3: Second companion */}
+              {fbtProducts[1] && (
+                <>
+                  <span className="text-xl font-bold text-neutral-400">+</span>
+                  <div
+                    className={`relative w-28 sm:w-36 aspect-square rounded-2xl bg-white p-3 border-2 flex items-center justify-center transition-all ${
+                      bundleChecked.item2 ? 'border-neutral-900 shadow-md' : 'border-neutral-200 opacity-40'
+                    }`}
+                  >
+                    <img
+                      src={fbtProducts[1].images[0]}
+                      alt={fbtProducts[1].name}
+                      className="w-full h-full object-contain"
+                    />
+                    <span className="absolute bottom-1 right-1 text-[9px] font-bold font-mono bg-emerald-600 text-white px-1.5 py-0.5 rounded">
+                      Pair #2
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Checkbox Options and Bundle CTA */}
+            <div className="flex-1 max-w-md w-full space-y-3">
+              <div className="space-y-2 text-xs">
+                <label className="flex items-center space-x-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={bundleChecked.main}
+                    onChange={(e) => setBundleChecked((prev) => ({ ...prev, main: e.target.checked }))}
+                    className="w-4 h-4 rounded text-neutral-900 focus:ring-neutral-900 border-neutral-300"
+                  />
+                  <span className="text-neutral-800 font-medium">
+                    <strong>This item:</strong> {selectedProduct.name}{' '}
+                    <span className="font-mono font-bold text-neutral-900">
+                      (${selectedProduct.price.toFixed(2)})
+                    </span>
+                  </span>
+                </label>
+
+                {fbtProducts[0] && (
+                  <label className="flex items-center space-x-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={bundleChecked.item1}
+                      onChange={(e) => setBundleChecked((prev) => ({ ...prev, item1: e.target.checked }))}
+                      className="w-4 h-4 rounded text-neutral-900 focus:ring-neutral-900 border-neutral-300"
+                    />
+                    <span className="text-neutral-800 font-medium">
+                      <strong>Add:</strong> {fbtProducts[0].name}{' '}
+                      <span className="font-mono font-bold text-neutral-900">
+                        (${fbtProducts[0].price.toFixed(2)})
+                      </span>
+                    </span>
+                  </label>
+                )}
+
+                {fbtProducts[1] && (
+                  <label className="flex items-center space-x-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={bundleChecked.item2}
+                      onChange={(e) => setBundleChecked((prev) => ({ ...prev, item2: e.target.checked }))}
+                      className="w-4 h-4 rounded text-neutral-900 focus:ring-neutral-900 border-neutral-300"
+                    />
+                    <span className="text-neutral-800 font-medium">
+                      <strong>Add:</strong> {fbtProducts[1].name}{' '}
+                      <span className="font-mono font-bold text-neutral-900">
+                        (${fbtProducts[1].price.toFixed(2)})
+                      </span>
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Total & 1-Click Action */}
+              <div className="pt-3 border-t border-neutral-200 flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-[11px] font-mono text-neutral-500 uppercase font-semibold">
+                    Bundle Price
+                  </div>
+                  <div className="flex items-baseline space-x-2">
+                    <span className="text-2xl font-black text-neutral-900">
+                      ${bundleDiscountedTotal.toFixed(2)}
+                    </span>
+                    {bundleSavings > 0 && (
+                      <span className="text-xs text-neutral-400 line-through">
+                        ${bundleTotal.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleAddBundleToCart}
+                  disabled={bundleItems.filter((b) => b.active).length === 0}
+                  className="px-6 py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-2xl text-xs font-black uppercase tracking-wider shadow-lg hover:shadow-xl transition-all disabled:opacity-40"
+                >
+                  Add Selected to Bag
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div id="community-reviews-section" className="pt-12 border-t border-neutral-200 mb-16 scroll-mt-24">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
           <div>
@@ -722,6 +941,34 @@ export const ProductDetailView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Sticky Mobile Buy Bar (PRD Section 10 & 14) */}
+      <div className="lg:hidden fixed bottom-14 inset-x-0 bg-white/95 backdrop-blur-md border-t border-neutral-200 p-3 z-30 shadow-2xl flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-[10px] font-mono text-neutral-500 font-bold uppercase truncate max-w-[130px]">
+            {selectedProduct.name}
+          </div>
+          <div className="text-base font-black text-neutral-900">
+            ${selectedProduct.price.toFixed(2)}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleAddToCart}
+            className="px-3.5 py-2.5 bg-neutral-900 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md active:scale-95 transition-transform"
+          >
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span>Add to Bag</span>
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="px-3.5 py-2.5 bg-[#4285F4] text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md active:scale-95 transition-transform"
+          >
+            <Zap className="w-3.5 h-3.5 fill-white" />
+            <span>Buy Now</span>
+          </button>
+        </div>
+      </div>
 
     </div>
   );

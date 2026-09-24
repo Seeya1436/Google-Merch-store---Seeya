@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Search, Heart, ShoppingBag, User, Menu, X, ArrowRight, Sparkles } from 'lucide-react';
+import { Search, Heart, ShoppingBag, User, Menu, X, ArrowRight, Sparkles, ChevronDown } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { CategoryId } from '../../types';
 import { GoogleGIcon, GoogleColoredText, GoogleColorStripe, GoogleColorDots } from './GoogleLogo';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [collectionsDropdown, setCollectionsDropdown] = useState(false);
+  const [brandsDropdown, setBrandsDropdown] = useState(false);
+
   const {
     activeView,
     setActiveView,
@@ -20,18 +23,21 @@ export const Header: React.FC = () => {
 
   const NAV_ITEMS: { id: CategoryId | 'all'; label: string; badge?: string; badgeColor?: string }[] = [
     { id: 'new', label: 'New', badge: 'Fresh', badgeColor: 'bg-[#4285F4]/10 text-[#4285F4]' },
-    { id: 'apparel', label: 'Apparel' },
-    { id: 'accessories', label: 'Accessories' },
+    { id: '1998-retro', label: '1998 Retro', badge: 'Iconic', badgeColor: 'bg-amber-100 text-amber-900' },
+    { id: 'mens', label: "Men's" },
+    { id: 'womens', label: "Women's" },
+    { id: 'bags', label: 'Bags' },
     { id: 'drinkware', label: 'Drinkware' },
-    { id: 'home', label: 'Home & Lifestyle' },
-    { id: 'collectibles', label: 'Collectibles' },
-    { id: 'best-sellers', label: 'Best Sellers', badge: 'Top', badgeColor: 'bg-[#FBBC05]/20 text-neutral-900' },
-    { id: 'sale', label: 'Sale', badge: 'Hot', badgeColor: 'bg-[#EA4335]/10 text-[#EA4335]' },
+    { id: 'headgear', label: 'Headgear' },
+    { id: 'socks', label: 'Socks' },
+    { id: 'sale', label: 'Clearance', badge: 'Sale', badgeColor: 'bg-[#EA4335]/10 text-[#EA4335]' },
   ];
 
   const handleNavClick = (catId: CategoryId | 'all') => {
     navigateToPLPWithCategory(catId);
     setMobileMenuOpen(false);
+    setCollectionsDropdown(false);
+    setBrandsDropdown(false);
   };
 
   const handleLogoClick = () => {
@@ -92,9 +98,9 @@ export const Header: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`px-3.5 py-2 rounded-full text-xs xl:text-sm font-medium transition-all relative flex items-center space-x-1.5 ${
+                  className={`px-3 py-2 rounded-xl text-xs xl:text-sm font-medium transition-all relative flex items-center space-x-1.5 ${
                     isActive
-                      ? 'bg-neutral-900 text-white font-semibold shadow-sm ring-2 ring-neutral-900/10'
+                      ? 'bg-neutral-900 text-white font-semibold shadow-xs'
                       : 'text-neutral-700 hover:text-black hover:bg-neutral-100'
                   }`}
                 >
@@ -111,6 +117,76 @@ export const Header: React.FC = () => {
                 </button>
               );
             })}
+
+            {/* Dropdown: Collections */}
+            <div className="relative">
+              <button
+                onClick={() => setCollectionsDropdown(!collectionsDropdown)}
+                onMouseEnter={() => setCollectionsDropdown(true)}
+                className="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium text-neutral-700 hover:text-black hover:bg-neutral-100 flex items-center space-x-1"
+              >
+                <span>Collections</span>
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+
+              {collectionsDropdown && (
+                <div
+                  onMouseLeave={() => setCollectionsDropdown(false)}
+                  className="absolute left-0 top-full mt-1 w-52 bg-white rounded-2xl shadow-xl border border-neutral-200 py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+                >
+                  {[
+                    { id: '1998-retro', label: '1998 Retro Collection' },
+                    { id: 'chrome-dino', label: 'Chrome Dino Universe' },
+                    { id: 'super-g', label: 'Super G Gradient Series' },
+                    { id: 'google-bike', label: 'Google Campus Bike' },
+                    { id: 'eco-friendly', label: 'Eco-Friendly & Recycled' },
+                  ].map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => handleNavClick(sub.id as any)}
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 hover:text-blue-600 transition-colors"
+                    >
+                      {sub.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Dropdown: Brands */}
+            <div className="relative">
+              <button
+                onClick={() => setBrandsDropdown(!brandsDropdown)}
+                onMouseEnter={() => setBrandsDropdown(true)}
+                className="px-3 py-2 rounded-xl text-xs xl:text-sm font-medium text-neutral-700 hover:text-black hover:bg-neutral-100 flex items-center space-x-1"
+              >
+                <span>Brands</span>
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+
+              {brandsDropdown && (
+                <div
+                  onMouseLeave={() => setBrandsDropdown(false)}
+                  className="absolute left-0 top-full mt-1 w-48 bg-white rounded-2xl shadow-xl border border-neutral-200 py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+                >
+                  {[
+                    { id: 'google', label: 'Google Heritage' },
+                    { id: 'android', label: 'Android Mascot' },
+                    { id: 'youtube', label: 'YouTube Creator' },
+                    { id: 'cloud', label: 'Google Cloud' },
+                    { id: 'chrome-dino', label: 'Chrome Dino' },
+                  ].map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => handleNavClick(sub.id as any)}
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 hover:text-blue-600 transition-colors"
+                    >
+                      {sub.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Right Action Icons */}
@@ -152,11 +228,11 @@ export const Header: React.FC = () => {
             {/* Shopping Bag Icon */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="p-2.5 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-all shadow-sm hover:shadow flex items-center space-x-2 px-3 sm:px-4 group"
+              className="p-2.5 bg-neutral-900 text-white rounded-2xl hover:bg-neutral-800 transition-all shadow-sm hover:shadow flex items-center space-x-2 px-3.5 sm:px-4 group"
               aria-label="Open Shopping Bag"
             >
               <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-semibold">{cartCount}</span>
+              <span className="text-xs font-extrabold">{cartCount}</span>
             </button>
           </div>
         </div>
@@ -164,9 +240,9 @@ export const Header: React.FC = () => {
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-neutral-200 bg-white px-4 pt-3 pb-6 shadow-xl animate-in slide-in-from-top duration-200">
+        <div className="lg:hidden border-t border-neutral-200 bg-white px-4 pt-3 pb-6 shadow-xl animate-in slide-in-from-top duration-200 max-h-[80vh] overflow-y-auto">
           <div className="flex flex-col space-y-1">
-            <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-neutral-400">
+            <div className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-neutral-400 font-mono">
               Shop Categories
             </div>
             {NAV_ITEMS.map((item) => (
@@ -180,22 +256,56 @@ export const Header: React.FC = () => {
                 }`}
               >
                 <span>{item.label}</span>
-                <ArrowRight className="w-4 h-4 opacity-50" />
+                {item.badge && (
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                      item.badgeColor || 'bg-neutral-100 text-neutral-800'
+                    }`}
+                  >
+                    {item.badge}
+                  </span>
+                )}
               </button>
             ))}
 
-            <div className="border-t border-neutral-100 my-2 pt-2">
-              <button
-                onClick={() => {
-                  setIsAccountOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center space-x-3 px-4 py-3 text-neutral-800 hover:bg-neutral-100 rounded-xl text-sm font-medium"
-              >
-                <User className="w-5 h-5 text-neutral-500" />
-                <span>My Account & Orders</span>
-              </button>
+            <div className="pt-3 pb-1 border-t border-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400 font-mono">
+              Collections
             </div>
+            {[
+              { id: '1998-retro', label: '1998 Retro Collection' },
+              { id: 'chrome-dino', label: 'Chrome Dino Universe' },
+              { id: 'super-g', label: 'Super G Gradient Series' },
+              { id: 'google-bike', label: 'Google Campus Bike' },
+              { id: 'eco-friendly', label: 'Eco-Friendly & Recycled' },
+            ].map((sub) => (
+              <button
+                key={sub.id}
+                onClick={() => handleNavClick(sub.id as any)}
+                className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100"
+              >
+                <span>{sub.label}</span>
+                <ArrowRight className="w-3 h-3 text-neutral-400" />
+              </button>
+            ))}
+
+            <div className="pt-3 pb-1 border-t border-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400 font-mono">
+              Brands
+            </div>
+            {[
+              { id: 'google', label: 'Google Heritage' },
+              { id: 'android', label: 'Android Mascot' },
+              { id: 'youtube', label: 'YouTube Creator' },
+              { id: 'cloud', label: 'Google Cloud' },
+            ].map((sub) => (
+              <button
+                key={sub.id}
+                onClick={() => handleNavClick(sub.id as any)}
+                className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100"
+              >
+                <span>{sub.label}</span>
+                <ArrowRight className="w-3 h-3 text-neutral-400" />
+              </button>
+            ))}
           </div>
         </div>
       )}

@@ -27,40 +27,44 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, compact = fal
       
       {/* Product Image Stage */}
       <div
-        className="relative aspect-square bg-neutral-100 overflow-hidden cursor-pointer"
+        className="relative aspect-square bg-white p-4 overflow-hidden cursor-pointer flex items-center justify-center border-b border-neutral-100"
         onClick={() => openProductDetail(product)}
       >
         <img
           src={activeImage}
           alt={product.name}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+          className="w-full h-full object-contain object-center group-hover:scale-108 transition-transform duration-500 ease-out"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src =
+              'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
+          }}
         />
 
         {/* Badges Stack with authentic Google Colors */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
           {product.isNew && (
-            <span className="px-2.5 py-1 bg-[#4285F4] text-white text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-xs flex items-center">
+            <span className="px-2 py-0.5 bg-[#4285F4] text-white text-[10px] font-extrabold uppercase tracking-wider rounded-md shadow-2xs flex items-center">
               <Sparkles className="w-2.5 h-2.5 mr-1" /> New
             </span>
           )}
           {product.isBestSeller && !product.isNew && (
-            <span className="px-2.5 py-1 bg-neutral-900 text-white text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-xs">
+            <span className="px-2 py-0.5 bg-neutral-900 text-white text-[10px] font-extrabold uppercase tracking-wider rounded-md shadow-2xs">
               Best Seller
             </span>
           )}
-          {product.tags?.includes('limited') && (
-            <span className="px-2.5 py-1 bg-[#FBBC05] text-neutral-900 text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-xs">
-              Limited
+          {product.badge && !product.isNew && !product.isBestSeller && (
+            <span className="px-2 py-0.5 bg-[#FBBC05] text-neutral-900 text-[10px] font-extrabold uppercase tracking-wider rounded-md shadow-2xs">
+              {product.badge}
             </span>
           )}
           {product.isSale && (
-            <span className="px-2.5 py-1 bg-[#EA4335] text-white text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-xs">
+            <span className="px-2 py-0.5 bg-[#EA4335] text-white text-[10px] font-extrabold uppercase tracking-wider rounded-md shadow-2xs">
               Sale
             </span>
           )}
           {product.ecoFriendly && (
-            <span className="px-2.5 py-1 bg-[#34A853] text-white text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-xs flex items-center">
+            <span className="px-2 py-0.5 bg-[#34A853] text-white text-[10px] font-extrabold uppercase tracking-wider rounded-md shadow-2xs flex items-center">
               <Leaf className="w-2.5 h-2.5 mr-1" /> Eco
             </span>
           )}
@@ -162,10 +166,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, compact = fal
         {/* Price & Action */}
         <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
           <div className="flex items-baseline space-x-2">
-            <span className="text-base font-extrabold text-neutral-900">${product.price}</span>
+            <span className="text-base font-extrabold text-neutral-900">${product.price.toFixed(2)}</span>
             {product.originalPrice && (
               <span className="text-xs text-neutral-400 line-through font-medium">
-                ${product.originalPrice}
+                ${product.originalPrice.toFixed(2)}
               </span>
             )}
           </div>

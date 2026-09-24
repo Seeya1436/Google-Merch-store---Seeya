@@ -8,7 +8,9 @@ export const JustDroppedCarousel: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { navigateToPLPWithCategory } = useShop();
 
-  const newProducts = PRODUCTS.filter((p) => p.isNew || p.category === 'new').slice(0, 14);
+  const newProducts = PRODUCTS.filter(
+    (p) => p.isNew || p.category === 'new' || p.routes?.some((r) => r.includes('/shop/new'))
+  ).slice(0, 16);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -25,10 +27,10 @@ export const JustDroppedCarousel: React.FC = () => {
         <div>
           <div className="flex items-center space-x-1.5 text-blue-600 font-mono text-xs font-bold uppercase tracking-widest mb-1">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Fresh Off the Press</span>
+            <span>Official Google Store 2026</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-neutral-900 tracking-tight">
-            JUST DROPPED
+            NEW ARRIVALS
           </h2>
         </div>
 
@@ -53,9 +55,9 @@ export const JustDroppedCarousel: React.FC = () => {
 
           <button
             onClick={() => navigateToPLPWithCategory('new')}
-            className="text-xs sm:text-sm font-bold text-neutral-900 hover:text-blue-600 flex items-center space-x-1 group"
+            className="text-xs sm:text-sm font-bold text-neutral-900 hover:text-blue-600 flex items-center space-x-1 group uppercase tracking-wider"
           >
-            <span>View All</span>
+            <span>VIEW ALL NEW</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>

@@ -157,10 +157,40 @@ export const CheckoutModal: React.FC = () => {
             </div>
 
             {/* Order Brief Summary */}
-            <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs space-y-1 mt-4">
-              <div className="flex justify-between font-bold text-neutral-900">
-                <span>Total Items: {cart.reduce((a, b) => a + b.quantity, 0)}</span>
-                <span>Grand Total: ${grandTotal.toFixed(2)}</span>
+            <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs space-y-2 mt-4">
+              <div className="font-mono font-bold uppercase text-[10px] text-neutral-400">
+                Order Items ({cart.reduce((a, b) => a + b.quantity, 0)})
+              </div>
+              <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                {cart.map((it) => (
+                  <div key={it.id} className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <img
+                        src={it.product.images[0]}
+                        alt=""
+                        className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 border border-neutral-200 shrink-0"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
+                        }}
+                      />
+                      <span className="truncate text-neutral-800 font-medium">
+                        {it.product.name} <span className="text-neutral-400">×{it.quantity}</span>
+                      </span>
+                    </div>
+                    <span className="font-mono font-bold text-neutral-900 shrink-0">
+                      ${(it.product.price * it.quantity).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between font-bold text-neutral-900 pt-2 border-t border-neutral-200">
+                <span>Shipping:</span>
+                <span className="text-emerald-700">{shippingCost === 0 ? 'FREE' : `${shippingCost.toFixed(2)}`}</span>
+              </div>
+              <div className="flex justify-between font-extrabold text-neutral-900 text-sm">
+                <span>Grand Total:</span>
+                <span>${grandTotal.toFixed(2)}</span>
               </div>
             </div>
 

@@ -17,7 +17,22 @@ export type CategoryId =
   | 'lifestyle'
   | 'featured'
   | 'best-sellers'
-  | 'sale';
+  | 'sale'
+  | 'mens'
+  | 'womens'
+  | 'kids'
+  | 'headgear'
+  | 'socks'
+  | 'bags'
+  | 'eco-friendly'
+  | 'stationery'
+  | 'collections'
+  | 'shop-by-brand'
+  | '1998-retro'
+  | 'super-g'
+  | 'google-bike'
+  | 'chrome-dino'
+  | 'clearance';
 
 export type LifestyleTag = 
   | 'desk'
@@ -46,6 +61,7 @@ export interface Review {
 
 export interface Product {
   id: string;
+  code?: string;
   name: string;
   slug: string;
   tagline: string;
@@ -72,6 +88,12 @@ export interface Product {
   careInstructions?: string;
   ecoFriendly?: boolean;
   reviews?: Review[];
+  sourceUrl?: string;
+  relatedProductIds?: string[];
+  frequentlyBoughtTogetherIds?: string[];
+  itemType?: string;
+  badge?: string;
+  routes?: string[];
 }
 
 export interface CartItem {

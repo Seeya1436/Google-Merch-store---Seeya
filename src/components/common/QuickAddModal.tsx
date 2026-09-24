@@ -40,8 +40,12 @@ export const QuickAddModal: React.FC = () => {
           <img
             src={quickAddProduct.images[0]}
             alt={quickAddProduct.name}
-            className="w-20 h-20 rounded-2xl object-cover bg-neutral-100 border border-neutral-200 shrink-0"
+            className="w-20 h-20 rounded-2xl object-contain bg-white p-1.5 border border-neutral-200 shrink-0"
             referrerPolicy="no-referrer"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src =
+                'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
+            }}
           />
           <div className="flex-1 min-w-0">
             <span className="text-[10px] font-bold uppercase tracking-wider font-mono text-neutral-400">
@@ -52,11 +56,11 @@ export const QuickAddModal: React.FC = () => {
             </h3>
             <div className="flex items-center space-x-2 mt-1">
               <span className="font-bold text-base text-neutral-900">
-                ${quickAddProduct.price}
+                ${quickAddProduct.price.toFixed(2)}
               </span>
               {quickAddProduct.originalPrice && (
                 <span className="text-xs text-neutral-400 line-through">
-                  ${quickAddProduct.originalPrice}
+                  ${quickAddProduct.originalPrice.toFixed(2)}
                 </span>
               )}
             </div>

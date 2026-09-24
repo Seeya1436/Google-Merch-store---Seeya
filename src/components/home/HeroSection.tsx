@@ -68,11 +68,11 @@ export const HeroSection: React.FC = () => {
 
             <button
               onClick={() => {
-                const el = document.getElementById('shop-by-collection');
+                const el = document.getElementById('official-collections') || document.getElementById('shop-by-category');
                 if (el) {
                   el.scrollIntoView({ behavior: 'smooth' });
                 } else {
-                  navigateToPLPWithCategory('all');
+                  navigateToPLPWithCategory('1998-retro');
                 }
               }}
               className="px-8 py-4 bg-neutral-900/80 backdrop-blur-md text-white font-semibold rounded-2xl text-sm sm:text-base border border-white/20 hover:bg-white/10 transition-all flex items-center justify-center"

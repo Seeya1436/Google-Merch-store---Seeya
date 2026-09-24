@@ -5,6 +5,8 @@ import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
 import { HeroSection } from './components/home/HeroSection';
 import { ShopByCategory } from './components/home/ShopByCategory';
+import { CollectionsSection } from './components/home/CollectionsSection';
+import { ShopByBrandSection } from './components/home/ShopByBrandSection';
 import { JustDroppedCarousel } from './components/home/JustDroppedCarousel';
 import { EditorialSection } from './components/home/EditorialSection';
 import { BestSellersGrid } from './components/home/BestSellersGrid';
@@ -35,8 +37,10 @@ const MainContent: React.FC = () => {
           <HeroSection />
           <ShopByCategory />
           <JustDroppedCarousel />
+          <CollectionsSection />
           <EditorialSection />
           <BestSellersGrid />
+          <ShopByBrandSection />
           <SocialCommerceSection />
           <FindYourFit />
           <PromoBanner />

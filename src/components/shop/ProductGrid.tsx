@@ -28,93 +28,135 @@ export const ProductGrid: React.FC = () => {
       // Category & Collection filter
       if (filters.category !== 'all') {
         if (filters.category === 'new') {
-          if (!product.isNew) return false;
+          if (!product.isNew && !product.routes?.some((r) => r.includes('/shop/new'))) return false;
         } else if (filters.category === 'best-sellers') {
           if (!product.isBestSeller) return false;
-        } else if (filters.category === 'sale') {
-          if (!product.isSale) return false;
+        } else if (filters.category === 'sale' || filters.category === 'clearance') {
+          if (!product.isSale && !product.routes?.some((r) => r.includes('clearance'))) return false;
         } else if (filters.category === 'featured') {
           if (!product.isBestSeller && !product.isNew && !product.tags?.includes('featured')) return false;
+        } else if (filters.category === 'mens') {
+          const isMens =
+            product.category === 'mens' ||
+            product.itemType?.toLowerCase().includes("men's") ||
+            product.routes?.some((r) => r.includes('/shop/apparel/mens'));
+          if (!isMens) return false;
+        } else if (filters.category === 'womens') {
+          const isWomens =
+            product.category === 'womens' ||
+            product.itemType?.toLowerCase().includes("women's") ||
+            product.routes?.some((r) => r.includes('/shop/apparel/womens'));
+          if (!isWomens) return false;
+        } else if (filters.category === 'headgear') {
+          const isHeadgear =
+            product.category === 'headgear' ||
+            product.itemType?.toLowerCase().includes('headgear') ||
+            product.name.toLowerCase().includes('cap') ||
+            product.name.toLowerCase().includes('hat') ||
+            product.routes?.some((r) => r.includes('/shop/apparel/headgear'));
+          if (!isHeadgear) return false;
+        } else if (filters.category === 'socks') {
+          const isSocks =
+            product.category === 'socks' ||
+            product.name.toLowerCase().includes('sock') ||
+            product.routes?.some((r) => r.includes('/shop/apparel/socks'));
+          if (!isSocks) return false;
+        } else if (filters.category === 'bags') {
+          const isBags =
+            product.category === 'bags' ||
+            product.itemType?.toLowerCase().includes('bags') ||
+            product.name.toLowerCase().includes('tote') ||
+            product.name.toLowerCase().includes('backpack') ||
+            product.name.toLowerCase().includes('case') ||
+            product.routes?.some((r) => r.includes('/shop/lifestyle/bags'));
+          if (!isBags) return false;
+        } else if (filters.category === 'drinkware') {
+          const isDrinkware =
+            product.category === 'drinkware' ||
+            product.itemType?.toLowerCase().includes('drinkware') ||
+            product.name.toLowerCase().includes('tumbler') ||
+            product.name.toLowerCase().includes('mug') ||
+            product.name.toLowerCase().includes('bottle') ||
+            product.routes?.some((r) => r.includes('/shop/lifestyle/drinkware'));
+          if (!isDrinkware) return false;
+        } else if (filters.category === 'eco-friendly') {
+          const isEco =
+            product.category === 'eco-friendly' ||
+            product.ecoFriendly === true ||
+            product.routes?.some((r) => r.includes('/shop/lifestyle/eco-friendly'));
+          if (!isEco) return false;
+        } else if (filters.category === 'stationery') {
+          const isStationery =
+            product.category === 'stationery' ||
+            product.itemType?.toLowerCase().includes('stationery') ||
+            product.name.toLowerCase().includes('notebook') ||
+            product.name.toLowerCase().includes('pencil') ||
+            product.name.toLowerCase().includes('sticker') ||
+            product.routes?.some((r) => r.includes('/shop/stationery'));
+          if (!isStationery) return false;
+        } else if (filters.category === 'kids') {
+          const isKids =
+            product.category === 'kids' ||
+            product.itemType?.toLowerCase().includes('kids') ||
+            product.name.toLowerCase().includes('youth') ||
+            product.name.toLowerCase().includes('toddler') ||
+            product.name.toLowerCase().includes('puzzle') ||
+            product.name.toLowerCase().includes('pickleball') ||
+            product.routes?.some((r) => r.includes('/shop/apparel/kids') || r.includes('fun-and-games'));
+          if (!isKids) return false;
+        } else if (filters.category === '1998-retro' || filters.category === 'retro') {
+          const isRetro =
+            product.category === '1998-retro' ||
+            product.collection?.toLowerCase().includes('1998') ||
+            product.name.toLowerCase().includes('1998') ||
+            product.badge?.toLowerCase().includes('retro') ||
+            product.routes?.some((r) => r.includes('1998-retro-collection'));
+          if (!isRetro) return false;
+        } else if (filters.category === 'chrome-dino' || filters.category === 'chrome') {
+          const isDino =
+            product.category === 'chrome-dino' ||
+            product.collection?.toLowerCase().includes('dino') ||
+            product.name.toLowerCase().includes('dino') ||
+            product.routes?.some((r) => r.includes('chrome-dino'));
+          if (!isDino) return false;
+        } else if (filters.category === 'super-g') {
+          const isSuperG =
+            product.category === 'super-g' ||
+            product.name.toLowerCase().includes('super g') ||
+            product.routes?.some((r) => r.includes('super-g'));
+          if (!isSuperG) return false;
+        } else if (filters.category === 'google-bike') {
+          const isBike =
+            product.category === 'google-bike' ||
+            product.name.toLowerCase().includes('bike') ||
+            product.routes?.some((r) => r.includes('google-bike'));
+          if (!isBike) return false;
         } else if (filters.category === 'android') {
           const isAndroid =
             product.category === 'android' ||
             product.brand === 'Android' ||
-            product.collection?.toLowerCase().includes('android') ||
-            product.id.includes('android') ||
             product.name.toLowerCase().includes('android') ||
-            product.name.toLowerCase().includes('bugdroid') ||
-            product.tags?.includes('android');
+            product.routes?.some((r) => r.includes('/shop/shop-by-brand/android'));
           if (!isAndroid) return false;
         } else if (filters.category === 'youtube') {
           const isYt =
             product.category === 'youtube' ||
             product.brand === 'YouTube' ||
-            product.collection?.toLowerCase().includes('youtube') ||
-            product.id.includes('yt') ||
             product.name.toLowerCase().includes('youtube') ||
-            product.tags?.includes('youtube');
+            product.routes?.some((r) => r.includes('/shop/shop-by-brand/youtube'));
           if (!isYt) return false;
         } else if (filters.category === 'cloud') {
           const isCloud =
             product.category === 'cloud' ||
             product.brand === 'Google Cloud' ||
-            product.collection?.toLowerCase().includes('cloud') ||
-            product.id.includes('cloud') ||
             product.name.toLowerCase().includes('cloud') ||
-            product.name.toLowerCase().includes('kubernetes') ||
-            product.tags?.includes('cloud');
+            product.routes?.some((r) => r.includes('/shop/shop-by-brand/google-cloud'));
           if (!isCloud) return false;
-        } else if (filters.category === 'chrome') {
-          const isChrome =
-            product.category === 'chrome' ||
-            product.brand === 'Chrome' ||
-            product.collection?.toLowerCase().includes('chrome') ||
-            product.id.includes('dino') ||
-            product.name.toLowerCase().includes('chrome') ||
-            product.name.toLowerCase().includes('dinosaur') ||
-            product.tags?.includes('chrome') ||
-            product.tags?.includes('dino');
-          if (!isChrome) return false;
-        } else if (filters.category === 'gemini') {
-          const isGemini =
-            product.category === 'gemini' ||
-            product.brand === 'Gemini' ||
-            product.collection?.toLowerCase().includes('gemini') ||
-            product.name.toLowerCase().includes('gemini') ||
-            product.tags?.includes('gemini');
-          if (!isGemini) return false;
-        } else if (filters.category === 'pixel') {
-          const isPixel =
-            product.category === 'pixel' ||
-            product.brand === 'Pixel' ||
-            product.collection?.toLowerCase().includes('pixel') ||
-            product.name.toLowerCase().includes('pixel') ||
-            product.tags?.includes('pixel');
-          if (!isPixel) return false;
         } else if (filters.category === 'google') {
           const isGoogle =
-            product.category === 'google' ||
             product.brand === 'Google' ||
-            product.collection?.toLowerCase().includes('google') ||
-            product.tags?.includes('google');
+            product.routes?.some((r) => r.includes('/shop/shop-by-brand/google'));
           if (!isGoogle) return false;
-        } else if (filters.category === 'office') {
-          const isOffice =
-            product.category === 'home' ||
-            product.category === 'office' ||
-            product.collection?.toLowerCase().includes('office') ||
-            product.subCategory?.toLowerCase().includes('desk') ||
-            product.subCategory?.toLowerCase().includes('stationery') ||
-            product.tags?.includes('stationery') ||
-            product.tags?.includes('desk') ||
-            product.tags?.includes('office');
-          if (!isOffice) return false;
-        } else if (filters.category === 'lifestyle') {
-          const isLifestyle =
-            product.category === 'home' ||
-            product.category === 'accessories' ||
-            (product.lifestyleCollection && product.lifestyleCollection.length > 0);
-          if (!isLifestyle) return false;
         } else if (product.category !== filters.category && product.collection?.toLowerCase() !== filters.category) {
           return false;
         }
@@ -290,21 +332,25 @@ export const ProductGrid: React.FC = () => {
           {[
             { id: 'all', label: 'All Products' },
             { id: 'new', label: 'New Drops' },
-            { id: 'google', label: 'Google Brand' },
-            { id: 'pixel', label: 'Pixel' },
-            { id: 'apparel', label: 'Apparel' },
-            { id: 'accessories', label: 'Accessories' },
+            { id: '1998-retro', label: '1998 Retro Collection' },
+            { id: 'mens', label: "Men's Apparel" },
+            { id: 'womens', label: "Women's Apparel" },
+            { id: 'headgear', label: 'Headgear & Caps' },
+            { id: 'bags', label: 'Bags & Packs' },
             { id: 'drinkware', label: 'Drinkware' },
-            { id: 'home', label: 'Home & Office' },
-            { id: 'collectibles', label: 'Collectibles' },
+            { id: 'socks', label: 'Socks' },
+            { id: 'accessories', label: 'Accessories' },
+            { id: 'eco-friendly', label: 'Eco-Friendly' },
+            { id: 'stationery', label: 'Stationery' },
+            { id: 'kids', label: 'Kids & Games' },
+            { id: 'chrome-dino', label: 'Chrome Dino' },
+            { id: 'super-g', label: 'Super G' },
+            { id: 'google-bike', label: 'Google Bike' },
             { id: 'android', label: 'Android' },
             { id: 'youtube', label: 'YouTube' },
             { id: 'cloud', label: 'Google Cloud' },
-            { id: 'chrome', label: 'Chrome Dino' },
-            { id: 'gemini', label: 'Gemini AI' },
-            { id: 'featured', label: 'Featured' },
             { id: 'best-sellers', label: 'Best Sellers' },
-            { id: 'sale', label: 'Sale' },
+            { id: 'sale', label: 'Clearance' },
           ].map((pill) => {
             const isSelected = filters.category === pill.id;
             return (
