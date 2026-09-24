@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { GoogleGIcon, GoogleColorDots } from '../common/GoogleLogo';
+import heroBannerImage from '../../assets/images/hero_google_lifestyle_1786590853279.jpg';
 
 export const HeroSection: React.FC = () => {
   const { navigateToPLPWithCategory } = useShop();
@@ -12,10 +13,14 @@ export const HeroSection: React.FC = () => {
       {/* Background Hero Photography */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/src/assets/images/hero_google_lifestyle_1786590853279.jpg"
+          src={heroBannerImage}
           alt="Google Merchandise Fashion Campaign"
           className="w-full h-full object-cover object-center opacity-60 scale-105 transition-transform duration-1000 hover:scale-100"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src =
+              'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80';
+          }}
         />
         {/* Gradients for text contrast */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent"></div>
