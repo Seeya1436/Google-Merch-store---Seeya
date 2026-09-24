@@ -613,6 +613,7 @@ export const ProductDetailView: React.FC = () => {
                   src={selectedProduct.images[0]}
                   alt={selectedProduct.name}
                   className="w-full h-full object-contain"
+                  referrerPolicy="no-referrer"
                 />
                 <span className="absolute bottom-1 right-1 text-[9px] font-bold font-mono bg-neutral-900 text-white px-1.5 py-0.5 rounded">
                   This Item
@@ -632,6 +633,7 @@ export const ProductDetailView: React.FC = () => {
                     src={fbtProducts[0].images[0]}
                     alt={fbtProducts[0].name}
                     className="w-full h-full object-contain"
+                    referrerPolicy="no-referrer"
                   />
                   <span className="absolute bottom-1 right-1 text-[9px] font-bold font-mono bg-blue-600 text-white px-1.5 py-0.5 rounded">
                     Pair #1
@@ -652,6 +654,7 @@ export const ProductDetailView: React.FC = () => {
                       src={fbtProducts[1].images[0]}
                       alt={fbtProducts[1].name}
                       className="w-full h-full object-contain"
+                      referrerPolicy="no-referrer"
                     />
                     <span className="absolute bottom-1 right-1 text-[9px] font-bold font-mono bg-emerald-600 text-white px-1.5 py-0.5 rounded">
                       Pair #2

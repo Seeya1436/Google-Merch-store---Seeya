@@ -127,6 +127,7 @@ export const CollectionsSection: React.FC = () => {
                 src={col.image}
                 alt={col.title}
                 className="w-full h-full object-contain object-center"
+                referrerPolicy="no-referrer"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
                     'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGFBB265399.jpg';

@@ -67,6 +67,7 @@ export const EditorialSection: React.FC = () => {
                   src={retroPickleball.images[0]}
                   alt={retroPickleball.name}
                   className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  referrerPolicy="no-referrer"
                 />
                 <span className="absolute top-2 left-2 text-[9px] font-mono font-bold bg-black/80 text-white px-1.5 py-0.5 rounded">
                   LIMITED DROP
@@ -113,6 +114,7 @@ export const EditorialSection: React.FC = () => {
                   src={retroPullover.images[0]}
                   alt={retroPullover.name}
                   className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  referrerPolicy="no-referrer"
                 />
                 <span className="absolute top-2 left-2 text-[9px] font-mono font-bold bg-[#4285F4] text-white px-1.5 py-0.5 rounded">
                   CAMPUS FLEECE

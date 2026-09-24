@@ -113,6 +113,7 @@ export const ShopByBrandSection: React.FC = () => {
                 src={brand.image}
                 alt={brand.name}
                 className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                referrerPolicy="no-referrer"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
                     'https://ik.imagekit.io/RM/store/20160512512/assets/items/largeimages/GGOEGXXX2600.jpg';
